@@ -1,4 +1,4 @@
-name: Build and Publish Docker Image
+name: Build and Deploy
 
 on:
   push:
@@ -10,7 +10,7 @@ env:
   IMAGE_NAME: casualcaleb/garage-sentinel
 
 jobs:
-  build-and-push:
+  build:
     runs-on: ubuntu-latest
 
     permissions:
@@ -34,5 +34,23 @@ jobs:
           context: .
           push: true
           tags: |
-            ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
-            ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ github.sha }}
+            ghcr.io/casualcaleb/garage-sentinel:latest
+            ghcr.io/casualcaleb/garage-sentinel:${{ github.sha }}
+
+  deploy:
+    needs: build
+    runs-on: [self-hosted, linux]
+
+    steps:
+      - name: Pull latest image
+        run: docker pull ghcr.io/casualcaleb/garage-sentinel:latest
+
+      - name: Replace running container
+        run: |
+          docker rm -f garage-sentinel || true
+
+          docker run -d \
+            --name garage-sentinel \
+            --restart unless-stopped \
+            -p 8000:8000 \
+            ghcr.io/casualcaleb/garage-sentinel:latest
