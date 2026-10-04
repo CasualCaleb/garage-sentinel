@@ -4,6 +4,10 @@ Garage Sentinel is a small FastAPI app deployed to a **very normal laptop that h
 
 The app itself is intentionally simple. The fun part is the deployment pipeline:
 
+## Deployment Pipeline 🚀
+
+Every push to `main` automatically triggers the following process:
+
 ```text
 Windows PC
     ↓
@@ -24,7 +28,7 @@ Old container replaced
 ✅ New version live
 ```
 
-No manual SSH deployment. No pulling the repo by hand. No remembering which Python command starts the thing.
+No manual SSH deployment. No pulling the repo by hand.
 
 Just:
 
@@ -32,34 +36,6 @@ Just:
 git push
 ```
 and the garage laptop sorts itself out.
-
-## Deployment Pipeline 🚀
-
-Every push to `main` automatically triggers the following process:
-
-```text
-Local Development
-       ↓
-    git push
-       ↓
-GitHub Actions
-       ↓
-Build Docker Image
-       ↓
-GitHub Container Registry
-       ↓
-Self-Hosted GitHub Runner
-       ↓
-Ubuntu Garage Server
-       ↓
-Pull Latest Image
-       ↓
-Replace Running Container
-       ↓
-New Version Live
-```
-
-Once code is pushed, no SSH or manual deployment is required.
 
 ## Stack 🧰
 
@@ -146,27 +122,3 @@ git push
 That's it.
 
 GitHub Actions handles the rest.
-
-## Current Deployment Architecture 🧠
-
-```text
-GitHub Repository
-      │
-      │ push to main
-      ▼
-GitHub Actions Runner
-      │
-      │ docker build
-      ▼
-GitHub Container Registry
-      │
-      │ docker pull
-      ▼
-Ubuntu Garage Server
-      │
-      ▼
-garage-sentinel container
-      │
-      ▼
-FastAPI
-```
