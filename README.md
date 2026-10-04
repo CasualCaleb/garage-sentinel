@@ -1,10 +1,42 @@
-# Garage Sentinel
+# Garage Sentinel 🚗💻⚡
 
-Garage Sentinel is a small FastAPI application used to experiment with Docker, GitHub Actions, container registries, and automated deployment to a self-hosted Ubuntu server.
+Garage Sentinel is a small FastAPI app deployed to a **very normal laptop that has been stripped of dignity and repurposed into an Ubuntu server in my garage**.
 
-The important bit isn't the app itself — it's the deployment pipeline.
+It lives out there quietly humming away, serving requests, pulling Docker images, and pretending it was always meant to be infrastructure.
 
-## Deployment Pipeline
+The app itself is intentionally simple. The fun part is the deployment pipeline:
+
+```text
+💻 Windows PC
+    ↓
+📦 git push
+    ↓
+⚙️ GitHub Actions
+    ↓
+🐳 Docker image build
+    ↓
+☁️ GitHub Container Registry
+    ↓
+🤖 Self-hosted GitHub runner
+    ↓
+🏚️ Ubuntu laptop in the garage
+    ↓
+🔥 Old container replaced
+    ↓
+✅ New version live
+```
+
+No manual SSH deployment. No pulling the repo by hand. No remembering which Python command starts the thing.
+
+Just:
+
+```bash
+git push
+```
+
+…and the garage laptop sorts itself out.
+
+## Deployment Pipeline 🚀
 
 Every push to `main` automatically triggers the following process:
 
@@ -32,18 +64,18 @@ New Version Live
 
 Once code is pushed, no SSH or manual deployment is required.
 
-## Stack
+## Stack 🧰
 
-- Python
-- FastAPI
-- Uvicorn
-- Docker
-- GitHub Actions
-- GitHub Container Registry
-- Ubuntu Server
-- Self-hosted GitHub Actions runner
+- 🐍 Python
+- ⚡ FastAPI
+- 🚀 Uvicorn
+- 🐳 Docker
+- ⚙️ GitHub Actions
+- ☁️ GitHub Container Registry
+- 🐧 Ubuntu Server
+- 🤖 Self-hosted GitHub Actions runner
 
-## Project Structure
+## Project Structure 📁
 
 ```text
 garage-sentinel/
@@ -58,7 +90,7 @@ garage-sentinel/
 └── README.md
 ```
 
-## Run Locally
+## Run Locally 🧪
 
 Install dependencies:
 
@@ -84,7 +116,7 @@ FastAPI documentation is available at:
 http://127.0.0.1:8000/docs
 ```
 
-## Run With Docker
+## Run With Docker 🐳
 
 Build the image:
 
@@ -104,7 +136,7 @@ Then open:
 http://localhost:8000
 ```
 
-## Production Deployment
+## Production Deployment 🏭
 
 The production Docker image is automatically built and published to:
 
@@ -116,10 +148,10 @@ The Ubuntu server is registered as a self-hosted GitHub Actions runner.
 
 After a successful build, the deployment job automatically:
 
-1. Authenticates with GitHub Container Registry.
-2. Pulls the newest Docker image.
-3. Stops and removes the currently running container.
-4. Starts a new container from the latest image.
+1. 🔐 Authenticates with GitHub Container Registry.
+2. 📥 Pulls the newest Docker image.
+3. 🧨 Stops and removes the currently running container.
+4. 🚀 Starts a new container from the latest image.
 
 The production container runs with:
 
@@ -129,7 +161,7 @@ The production container runs with:
 
 so the application automatically returns after a server reboot as long as Docker starts normally.
 
-## Updating Production
+## Updating Production 🔄
 
 Make changes locally, then:
 
@@ -143,7 +175,7 @@ That's it.
 
 GitHub Actions handles the rest.
 
-## Current Deployment Architecture
+## Current Deployment Architecture 🧠
 
 ```text
 GitHub Repository
@@ -166,21 +198,3 @@ garage-sentinel container
       ▼
 FastAPI
 ```
-
-## Notes
-
-Application source code does not need to be cloned onto the production Ubuntu server.
-
-The server only needs:
-
-- Docker
-- The GitHub Actions self-hosted runner
-- Access to GitHub Container Registry
-
-The Docker image contains the application and its Python dependencies.
-
-Persistent application data should be stored outside the container using Docker volumes or bind mounts rather than inside the container filesystem.
-
----
-
-**GARAGE SENTINEL // STATUS: PROBABLY FINE**
