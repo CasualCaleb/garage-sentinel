@@ -1,4 +1,4 @@
-\# FastAPI Docker Test
+# FastAPI Docker Test
 
 
 
@@ -6,7 +6,7 @@ Tiny FastAPI app for testing deployment to my Ubuntu server.
 
 
 
-\## Run locally
+## Run locally
 
 
 
