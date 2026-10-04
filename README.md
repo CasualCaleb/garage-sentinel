@@ -94,21 +94,6 @@ Then open:
 http://localhost:8000
 ```
 
-## Production Deployment 🏭
-
-The production Docker image is automatically built and published to:
-
-```text
-ghcr.io/casualcaleb/garage-sentinel:latest
-```
-
-After a successful build, the deployment job automatically:
-
-1. Authenticates with GitHub Container Registry.
-2. Pulls the newest Docker image.
-3. Stops and removes the currently running container.
-4. Starts a new container from the latest image.
-
 ## Updating Production 🔄
 
 Make changes locally, then:
