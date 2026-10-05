@@ -1,8 +1,9 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException
 from fastapi.responses import HTMLResponse
 
 app = FastAPI()
 
+THERMAL_ZONE = Path("/sys/class/thermal/thermal_zone0/temp")
 
 @app.get("/", response_class=HTMLResponse)
 async def home():
@@ -201,11 +202,20 @@ async def home():
     </html>
     """
 
+@app.get("/api/temp")
+async def get_cpu_temp():
+    try:
+        raw_temp = THERMAL_ZONE.read_text().strip()
+        temp_c = int(raw_temp) / 1000
 
-@app.get("/test-endpoint")
-async def test_endpoint():
-    return {
-        "message": "Welcome to the test endpoint",
-        "status": "Garage infrastructure operational",
-        "sentience_level": "concerning"
-    }
+        return {
+            "cpu_temp_c": round(temp_c, 1)
+        }
+
+    except (FileNotFoundError, ValueError, PermissionError):
+        raise HTTPException(
+            status_code=500,
+            detail="Unable to read CPU temperature"
+        )
+
+
