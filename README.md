@@ -4,7 +4,7 @@ Garage Sentinel is a small FastAPI app deployed to a **very normal laptop that h
 
 The app itself is intentionally simple. The fun part is the deployment pipeline:
 
-## Deployment Pipeline 🚀
+## Deployment Pipeline
 
 Every push to `main` automatically triggers the following process:
 
@@ -25,7 +25,7 @@ Ubuntu laptop in the garage
     ↓
 Old container replaced
     ↓
-✅ New version live
+New version live
 ```
 
 No manual SSH deployment. No pulling the repo by hand.
