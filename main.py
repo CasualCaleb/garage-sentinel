@@ -183,8 +183,8 @@ async def home():
             </div>
 
             <div class="buttons">
-                <a class="primary" href="/test-endpoint">
-                    Test Endpoint
+                <a class="primary" href="/api/temp">
+                    CPU Temp
                 </a>
 
                 <a class="secondary" href="/docs">
