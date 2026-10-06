@@ -181,12 +181,11 @@ async def home():
             </div>
 
             <div class="buttons">
-                <a class="primary" href="/api/telemetry">
-                    System Telemetry
+                <a class="primary" href="/documentation">
+                    API Documentation
                 </a>
-
-                <a class="secondary" href="/docs">
-                    API Docs
+                <a class="secondary" href="/api/telemetry">
+                    System Telemetry
                 </a>
             </div>
 
