@@ -181,8 +181,8 @@ async def home():
             </div>
 
             <div class="buttons">
-                <a class="primary" href="/api/temp">
-                    CPU Temp
+                <a class="primary" href="/api/telemetry">
+                    System Telemetry
                 </a>
 
                 <a class="secondary" href="/docs">
