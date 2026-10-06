@@ -103,20 +103,20 @@ async def get_telemetry():
         system_data = get_system_info()
 
         return {
-            "CPU": {
+            "cpu": {
                 "vendor_id": cpu_data["vendor_id"],
                 "model_name": cpu_data["model_name"],
                 "cpu_frequency_mhz": cpu_data["cpu_mhz"],
                 "cpu_temp_c": cpu_data["cpu_temp_c"],
             },
-            "MEMORY": {
+            "memory": {
                 "mem_total_kb": mem_data["mem_total"],
                 "mem_free_kb": mem_data["mem_free"],
                 "mem_available_kb": mem_data["mem_available"],
                 "mem_used_kb": mem_data["mem_used"],
                 "mem_usage_percent": mem_data["mem_usage_percent"],
             },
-            "SYSTEM": {
+            "system": {
                 "uptime_seconds": system_data["uptime_seconds"],
                 "load_15_min": system_data["load_15_min"],
             }
