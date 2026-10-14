@@ -181,7 +181,10 @@ async def home():
             </div>
 
             <div class="buttons">
-                <a class="primary" href="/documentation">
+                <a class="primary" href="/photos">
+                    Photos
+                </a>
+                <a class="secondary" href="/documentation">
                     API Documentation
                 </a>
                 <a class="secondary" href="/api/telemetry">
