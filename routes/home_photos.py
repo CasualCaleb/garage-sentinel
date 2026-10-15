@@ -5,7 +5,7 @@ router = APIRouter()
 
 
 @router.get('/photos', response_class=HTMLResponse)
-def home():
+def photos():
     return """<!DOCTYPE html>
 <html lang="en">
 <head>
@@ -140,6 +140,40 @@ def home():
             outline: 2px solid var(--accent);
             outline-offset: 3px;
         }
+        .show-more-button {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 14px 22px;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            background: var(--panel-soft);
+            color: var(--text);
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            text-decoration: none;
+            white-space: nowrap;
+            transition: background .2s, border-color .2s, transform .2s;
+        }
+        .show-more-button:hover {
+            background: var(--accent-soft);
+            border-color: var(--accent);
+            transform: translateY(-1px);
+        }
+        .show-more-button:focus-visible {
+            outline: 2px solid var(--accent);
+            outline-offset: 3px;
+        }
+        .show-more-container {
+            width: fit-content;
+            padding: 24px;
+            margin: 0 auto;
+            border-radius: 14px;
+            cursor: pointer;
+            transition: border-color .18s, transform .18s, box-shadow .18s;
+        }
     </style>
 </head>
 <body>
@@ -169,6 +203,9 @@ def home():
             <span id="photoCount"></span>
         </div>
         <div class="grid" id="fileGrid"></div>
+        <div id="show-more" class="show-more-container">
+            <button class=show-more-button onClick=loadPhotos()>Show more</button>
+        </div>
     </main>
     <script>
         const dropzone = document.getElementById('dropzone');
@@ -223,15 +260,22 @@ def home():
             status.textContent = '✅ Photos uploaded successfully!';
             await loadPhotos();
         }
-
+        
+        let visibleCount = 12;
+        let files = [];
+        let displayed = 0;
+        
         async function loadPhotos() {
             try {
-                const response = await fetch('/files');
-                if (!response.ok) throw new Error('Could not load photos');
-                const photos = await response.json();
-                grid.replaceChildren();
-                let displayed = 0;
-                for (const photo of photos) {
+                if (files.length === 0) {
+                    const response = await fetch('/files');
+                    if (!response.ok) throw new Error('Could not load photos');
+                    
+                    files = await response.json();
+                }
+                
+                for (const photo of files.slice(displayed, displayed + visibleCount)) {
+                    console.log(displayed);
                     const name = typeof photo === 'string' ? photo : photo.storage_name;
                     if (typeof name !== 'string') continue;
                     const displayName = typeof photo === 'string' ? photo : (photo.filename || name);
@@ -260,6 +304,10 @@ def home():
                     };
                     grid.appendChild(card);
                     displayed++;
+                    
+                    if (displayed === files.length) {
+                        document.getElementById('show-more').remove()
+                    }
                 }
                 photoCount.textContent = displayed + (displayed === 1 ? ' photo' : ' photos');
                 if (displayed === 0) {
