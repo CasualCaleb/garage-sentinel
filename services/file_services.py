@@ -38,7 +38,7 @@ def get_thumbnail(file_path: Path) -> BytesIO:
 
     with Image.open(file_path) as image:
         img = ImageOps.exif_transpose(image)
-        img.thumbnail((300, 300))
+        img.thumbnail((800, 800))
 
         img.convert("RGB").save(buffer, format="JPEG", quality=80)
 
