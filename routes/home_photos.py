@@ -235,6 +235,16 @@ def photos():
             dropzone.classList.remove('dragging');
             await uploadPhotos(event.dataTransfer.files);
         };
+        
+        let visibleCount = 12;
+        let files = [];
+        let displayed = 0;
+        
+        async function getFiles() {
+            const response = await fetch('/files');
+            if (!response.ok) throw new Error('Could not load photos');
+                    files = await response.json();
+        }
 
         async function uploadPhotos(files) {
             for (const file of files) {
@@ -258,24 +268,17 @@ def photos():
                 }
             }
             status.textContent = '✅ Photos uploaded successfully!';
+            await getFiles();
             await loadPhotos();
         }
-        
-        let visibleCount = 12;
-        let files = [];
-        let displayed = 0;
         
         async function loadPhotos() {
             try {
                 if (files.length === 0) {
-                    const response = await fetch('/files');
-                    if (!response.ok) throw new Error('Could not load photos');
-                    
-                    files = await response.json();
+                    await getFiles();
                 }
                 
                 for (const photo of files.slice(displayed, displayed + visibleCount)) {
-                    console.log(displayed);
                     const name = typeof photo === 'string' ? photo : photo.storage_name;
                     if (typeof name !== 'string') continue;
                     const displayName = typeof photo === 'string' ? photo : (photo.filename || name);
@@ -304,10 +307,6 @@ def photos():
                     };
                     grid.appendChild(card);
                     displayed++;
-                    
-                    if (displayed === files.length) {
-                        document.getElementById('show-more').remove()
-                    }
                 }
                 photoCount.textContent = displayed + (displayed === 1 ? ' photo' : ' photos');
                 if (displayed === 0) {
@@ -318,6 +317,9 @@ def photos():
                 }
             } catch (error) {
                 status.textContent = error.message;
+            }
+            if (displayed === files.length) {
+                document.getElementById('show-more')?.remove()
             }
         }
         loadPhotos();
