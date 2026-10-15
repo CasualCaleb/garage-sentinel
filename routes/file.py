@@ -2,9 +2,9 @@ import re
 from PIL import Image, UnidentifiedImageError
 from io import BytesIO
 from fastapi import APIRouter, UploadFile, File, HTTPException
-from fastapi.responses import FileResponse
+from fastapi.responses import FileResponse, StreamingResponse
 from services import file_services
-from services.file_services import storage_path
+from services.file_services import storage_path, get_thumbnail
 
 router = APIRouter()
 
@@ -40,9 +40,8 @@ async def upload_image(file: UploadFile = File(...)):
 
     return isinstance(file_id, int)
 
-# ------------- AI MADE -------------
 @router.get("/file/{storage_name}")
-async def get_file(storage_name: str):
+async def get_file(storage_name: str, size: str = "original"):
     if not re.fullmatch(r"[0-9a-f]{32}", storage_name):
         raise HTTPException(status_code=400, detail="Invalid storage name")
 
@@ -51,12 +50,19 @@ async def get_file(storage_name: str):
     if not file_path.is_file():
         raise HTTPException(status_code=404, detail="File not found")
 
+    if size == "thumbnail":
+        thumb = get_thumbnail(file_path)
+
+        return StreamingResponse(
+            thumb,
+            media_type="image/jpeg"
+        )
+
     return FileResponse(
         path=file_path,
         media_type="image/png",
         content_disposition_type="inline"
     )
-# ------------- AI MADE -------------
 
 @router.get("/files")
 async def get_files():

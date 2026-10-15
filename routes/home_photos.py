@@ -235,7 +235,8 @@ def home():
                     const name = typeof photo === 'string' ? photo : photo.storage_name;
                     if (typeof name !== 'string') continue;
                     const displayName = typeof photo === 'string' ? photo : (photo.filename || name);
-                    const url = '/file/' + encodeURIComponent(name);
+                    const thumb_url = `/file/${encodeURIComponent(name)}?size=thumbnail`;
+                    const original_url = `/file/${encodeURIComponent(name)}?`;
                     const card = document.createElement('div');
                     card.className = 'card';
                     card.tabIndex = 0;
@@ -243,7 +244,7 @@ def home():
                     const preview = document.createElement('div');
                     preview.className = 'preview';
                     const img = document.createElement('img');
-                    img.src = url;
+                    img.src = thumb_url;
                     img.alt = displayName;
                     img.loading = 'lazy';
                     preview.appendChild(img);
@@ -252,7 +253,7 @@ def home():
                     label.textContent = displayName;
                     label.title = displayName;
                     card.append(preview, label);
-                    const openPhoto = () => window.open(url, '_blank', 'noopener,noreferrer');
+                    const openPhoto = () => window.open(original_url, '_blank', 'noopener,noreferrer');
                     card.onclick = openPhoto;
                     card.onkeydown = (event) => {
                         if (event.key === 'Enter') openPhoto();
