@@ -56,7 +56,7 @@ def photos():
         .intro { color: var(--muted); font-size: 16px; margin-top: 14px; margin-bottom: 32px; }
         .upload {
             display: block; text-align: center; cursor: pointer;
-            padding: 48px 24px; border: 1px dashed #36506b;
+            padding: 42px 24px; border: 1px dashed #36506b;
             border-radius: 16px;
             background: linear-gradient(180deg, rgba(17, 24, 33, .96), rgba(13, 19, 26, .96));
             box-shadow: 0 16px 40px rgba(0,0,0,.15);
@@ -66,7 +66,7 @@ def photos():
             border-color: var(--accent); background: #172433; transform: translateY(-1px);
         }
         .upload-icon {
-            width: 58px; height: 58px; display: grid; place-items: center;
+            width: 48px; height: 48px; display: grid; place-items: center;
             margin: 0 auto 17px; border-radius: 16px;
             border: 1px solid rgba(125,211,252,.22); background: var(--accent-soft);
             font-size: 28px;
@@ -82,7 +82,7 @@ def photos():
         #status { min-height: 24px; margin-top: 15px; font-size: 14px; color: var(--accent); }
         .section-heading {
             display: flex; justify-content: space-between; align-items: baseline;
-            gap: 16px; margin-top: 37px;
+            gap: 16px;
         }
         .section-heading h2 { font-size: 23px; letter-spacing: -.02em; }
         #photoCount { font-size: 13px; color: var(--muted); }
