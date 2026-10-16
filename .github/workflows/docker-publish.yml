@@ -65,5 +65,5 @@ jobs:
             --restart unless-stopped \
             -p 8000:8000 \
             --mount type=bind,source=/srv/garage-sentinel/storage,target=/app/storage \
-            --mount type=bind,source=/srv/garage-sentinel/data,target=/app/data \
+            --mount type=bind,source=/srv/garage-sentinel/data/database.db,target=/app/db/database.db \
             ghcr.io/casualcaleb/garage-sentinel:latest
