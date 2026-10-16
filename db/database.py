@@ -66,3 +66,22 @@ async def get_file_by_storage_name(storage_name: str) -> File:
             storage_name=row[3],
             created_at=row[4],
         )
+
+async def get_file_by_id(file_id: int) -> File:
+    async with get_connection() as conn:
+        cursor = await conn.execute("""
+            SELECT *
+            FROM files
+            WHERE id = ?
+        """, (file_id,)
+        )
+
+        row = await cursor.fetchone()
+
+        return File(
+            id=row[0],
+            filename=row[1],
+            filetype=row[2],
+            storage_name=row[3],
+            created_at=row[4],
+        )

@@ -64,4 +64,5 @@ jobs:
             --name garage-sentinel \
             --restart unless-stopped \
             -p 8000:8000 \
+            --mount type=bind,source=/srv/garage-sentinel/storage,target=/app/storage \
             ghcr.io/casualcaleb/garage-sentinel:latest
