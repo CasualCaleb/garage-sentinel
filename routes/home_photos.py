@@ -61,6 +61,8 @@ def photos():
             background: linear-gradient(180deg, rgba(17, 24, 33, .96), rgba(13, 19, 26, .96));
             box-shadow: 0 16px 40px rgba(0,0,0,.15);
             transition: background .2s, border-color .2s, transform .2s;
+            animation: fadeDown 0.35s ease-out;
+            
         }
         .upload:hover, .upload.dragging {
             border-color: var(--accent); background: #172433; transform: translateY(-1px);
@@ -99,6 +101,7 @@ def photos():
             background: linear-gradient(180deg, rgba(17,24,33,.95), rgba(13,19,26,.95));
             box-shadow: 0 16px 40px rgba(0,0,0,.14);
             transition: border-color .18s, transform .18s, box-shadow .18s;
+            animation: fadeUpScale 0.35s ease-out;
         }
         .card:hover {
             border-color: #36506b; transform: scale(1.2);
@@ -187,6 +190,32 @@ def photos():
             cursor: pointer;
             transition: border-color .18s, transform .18s, box-shadow .18s;
         }
+        .eyebrow-container {
+            animation: fadeDown 0.35s ease-out;
+        }
+        
+        @keyframes fadeDown {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        @keyframes fadeUpScale {
+            from {
+                opacity: 0;
+                scale: 0;
+                transform: translateY(15px);
+            }
+            to {
+                opacity: 1;
+                scale: 1;
+                transform: translateY(0);
+            }
+        }
     </style>
 </head>
 <body>
@@ -195,12 +224,15 @@ def photos():
             <a class="nav-button" href="/">🏠 Home</a>
             <a class="nav-button" href="/gallery">📸 Photos</a>
             <a class="nav-button" href="/clips">📹 Clips</a>
+            <a class="nav-button" href="/documentation">🗿 Docs</a>
         </div>
     </header>
     <main>
-        <div class="eyebrow">Your drive</div>
-        <h1>Every photo, one place.</h1>
-        <p class="intro">Upload, browse, and revisit your favourite moments.</p>
+        <div class="eyebrow-container">
+            <div class="eyebrow">Your photos</div>
+            <h1>Every photo, one place.</h1>
+            <p class="intro">Upload, browse, and revisit your favourite moments.</p>
+        </div>
 
         <div class="upload" id="dropzone" role="button" tabindex="0" aria-label="Upload photos">
             <div class="upload-icon">📸️</div>
@@ -254,7 +286,7 @@ def photos():
         let displayed = 0;
         
         async function getFiles() {
-            const response = await fetch('/photos');
+            const response = await fetch('/api/photos');
             if (!response.ok) throw new Error('Could not load photos');
                     files = await response.json();
         }
@@ -270,9 +302,9 @@ def photos():
                 data.append('file', file);
                 status.textContent = 'Uploading ' + file.name + '...';
                 try {
-                    const response = await fetch('/file', { 
-                    method: 'POST',
-                    body: data
+                    const response = await fetch('/api/file', { 
+                        method: 'POST',
+                        body: data
                     });
                     
                     if (!response.ok) {
@@ -296,11 +328,14 @@ def photos():
                 }
                 
                 for (const photo of files.slice(displayed, displayed + visibleCount)) {
+                    // Staggered effect
+                    await new Promise(resolve => setTimeout(resolve, 100));
+                    
                     const name = typeof photo === 'string' ? photo : photo.storage_name;
                     if (typeof name !== 'string') continue;
                     const displayName = typeof photo === 'string' ? photo : (photo.filename || name);
-                    const thumb_url = `/file/${encodeURIComponent(name)}?size=thumbnail`;
-                    const original_url = `/file/${encodeURIComponent(name)}?`;
+                    const thumb_url = `/api/file/${encodeURIComponent(name)}?size=thumbnail`;
+                    const original_url = `/api/file/${encodeURIComponent(name)}?`;
                     const card = document.createElement('div');
                     card.className = 'card';
                     card.tabIndex = 0;

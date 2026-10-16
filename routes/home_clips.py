@@ -61,6 +61,7 @@ def clips():
             background: linear-gradient(180deg, rgba(17, 24, 33, .96), rgba(13, 19, 26, .96));
             box-shadow: 0 16px 40px rgba(0,0,0,.15);
             transition: background .2s, border-color .2s, transform .2s;
+            animation: fadeDown 0.35s ease-out;
         }
         .upload:hover, .upload.dragging {
             border-color: var(--accent); background: #172433; transform: translateY(-1px);
@@ -96,6 +97,7 @@ def clips():
             background: linear-gradient(180deg, rgba(17,24,33,.95), rgba(13,19,26,.95));
             box-shadow: 0 16px 40px rgba(0,0,0,.14);
             transition: border-color .18s, transform .18s, box-shadow .18s;
+            animation: fadeUpScale 0.35s ease-out;
         }
         .card:hover {
             border-color: #36506b; transform: scale(1.2);
@@ -222,6 +224,32 @@ def clips():
                 border-radius: 12px;
             }
         }
+        .eyebrow-container {
+            animation: fadeDown 0.35s ease-out;
+        }
+
+        @keyframes fadeDown {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        @keyframes fadeUpScale {
+            from {
+                opacity: 0;
+                scale: 0;
+                transform: translateY(15px);
+            }
+            to {
+                opacity: 1;
+                scale: 1;
+                transform: translateY(0);
+            }
+        }
     </style>
 </head>
 <body>
@@ -230,12 +258,15 @@ def clips():
             <a class="nav-button" href="/">🏠 Home</a>
             <a class="nav-button" href="/gallery">📸 Photos</a>
             <a class="nav-button" href="/clips">📹 Clips</a>
+            <a class="nav-button" href="/documentation">🗿 Docs</a>
         </div>
     </header>
     <main>
-        <div class="eyebrow">Your drive</div>
-        <h1>Every clip, one place.</h1>
-        <p class="intro">Upload, browse, and relive your favourite moments.</p>
+        <div class="eyebrow-container">
+            <div class="eyebrow">Your clips</div>
+            <h1>Every clip, one place.</h1>
+            <p class="intro">Upload, browse, and relive your favourite moments.</p>
+        </div class="eyebrow-container">
         
         <div class="upload" id="dropzone" role="button" tabindex="0" aria-label="Upload videos">
             <div class="upload-icon">📹️</div>
@@ -244,7 +275,7 @@ def clips():
             <span class="formats">MP4</span>
             <input type="file" id="fileInput" accept=".mp4,video/mp4" multiple hidden>
         </div>
-        <p id="status"></p>
+        <div id="status" role="status" aria-live="polite"></div>
         
         <div class="section-heading">
         <h2>My Clips</h2>
@@ -289,11 +320,11 @@ def clips():
                     return;
                 }
                 const data = new FormData();
-                data.append("file", file);
+                data.append('file', file);
                 status.textContent = 'Uploading ' + file.name + '...';
                 try {
-                    const response = await fetch("/file", {
-                        method: "POST",
+                    const response = await fetch("/api/file", {
+                        method: 'POST',
                         body: data
                     });
     
@@ -316,7 +347,7 @@ def clips():
         let displayed = 0;
         
         async function getFiles() {
-        const response = await fetch('/videos');
+        const response = await fetch('/api/videos');
         if (!response.ok) throw new Error('Could not load videos');
                 files = await response.json();
         }
@@ -328,6 +359,9 @@ def clips():
                 }
         
                 for (const video of files.slice(displayed, displayed + visibleCount)) {
+                    // Staggered effect
+                    await new Promise(resolve => setTimeout(resolve, 100));
+                
                     const name = typeof video === 'string' ? video : video.storage_name;
                     if (typeof name !== 'string') continue;
         
@@ -335,7 +369,7 @@ def clips():
                         ? video
                         : (video.filename || name);
         
-                    const url = `/file/${encodeURIComponent(name)}`;
+                    const url = `/api/file/${encodeURIComponent(name)}`;
         
                     // Create card
                     const card = document.createElement('div');

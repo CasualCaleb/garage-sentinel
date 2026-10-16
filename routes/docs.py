@@ -519,536 +519,573 @@ async def documentation():
     </head>
     <body>
         <div class="layout">
-            <!-- =====================================
-                 SIDEBAR
-            ====================================== -->
+    
             <aside class="sidebar">
                 <div class="brand">
-                    <div class="logo">
-                        🗿
-                    </div>
+                    <div class="logo">🗿</div>
                     <div>
-                        <h1>
-                            Garage Sentinel
-                        </h1>
-                        <span>
-                            Developer API
-                        </span>
+                        <h1>Garage Sentinel</h1>
+                        <span>Developer API</span>
                     </div>
                 </div>
+    
                 <nav>
-                    <div class="nav-label">
-                        Overview
-                    </div>
-                    <button
-                        class="nav-link active"
-                        onclick="showPage('introduction', this)"
-                    >
-                        Introduction
-                    </button>
-                    <button
-                        class="nav-link"
-                        onclick="showPage('openapi', this)"
-                    >
-                        OpenAPI
-                    </button>
-                    <div class="nav-label">
-                        Endpoints
-                    </div>
-                    <button
-                        class="nav-link"
-                        onclick="showPage('home', this)"
-                    >
-                        <span class="nav-method">
-                            GET
-                        </span>
-                        /
-                    </button>
-                    <button
-                        class="nav-link"
-                        onclick="showPage('telemetry', this)"
-                    >
-                        <span class="nav-method">
-                            GET
-                        </span>
-                        /api/telemetry
-                    </button>
+                    <div class="nav-label">Endpoints</div>
+    
+                    <div id="endpoint-nav"></div>
                 </nav>
             </aside>
-            <!-- =====================================
-                 MAIN CONTENT
-            ====================================== -->
+    
             <main class="main">
-                <!-- =================================
-                     INTRODUCTION
-                ================================== -->
-                <div
-                    id="introduction"
-                    class="doc-page active"
-                >
-                    <div class="hero">
-                        <div class="eyebrow">
-                            Garage Sentinel API
-                        </div>
-                        <h2>
-                            Your garage has an API now.
-                        </h2>
-                        <p>
-                            A lightweight FastAPI service running on a
-                            very determined Ubuntu laptop somewhere in
-                            a garage.
-                            Query system telemetry, monitor services,
-                            and eventually boss around whatever
-                            questionable hardware gets connected next.
-                        </p>
-                        <div class="meta">
-                            <div class="pill">
-                                <span class="dot"></span>
-                                API Online
-                            </div>
-                            <div class="pill">
-                                v0.1.0
-                            </div>
-                            <div class="pill">
-                                OpenAPI 3.1
-                            </div>
-                            <div class="pill">
-                                FastAPI
-                            </div>
-                        </div>
-                    </div>
-                    <section>
-                        <div class="section-title">
-                            <div>
-                                <h3>
-                                    Welcome
-                                </h3>
-                                <p>
-                                    The extremely necessary API
-                                    powering Garage Sentinel.
-                                </p>
-                            </div>
-                        </div>
-                        <div class="card">
-                            <div class="endpoint-body">
-                                <p>
-                                    Garage Sentinel provides a simple
-                                    HTTP API for interacting with the
-                                    systems, telemetry, devices, and
-                                    services running around the garage.
-                                </p>
-                                <p>
-                                    The API currently exposes host
-                                    telemetry from the Ubuntu server,
-                                    with support for additional services
-                                    and hardware planned as the project
-                                    grows.
-                                </p>
-                                <div class="info-grid">
-                                    <div class="info-card">
-                                        <div class="info-label">
-                                            Protocol
-                                        </div>
-                                        <div class="info-value">
-                                            HTTP / JSON
-                                        </div>
-                                    </div>
-                                    <div class="info-card">
-                                        <div class="info-label">
-                                            Framework
-                                        </div>
-                                        <div class="info-value">
-                                            FastAPI
-                                        </div>
-                                    </div>
-                                    <div class="info-card">
-                                        <div class="info-label">
-                                            Version
-                                        </div>
-                                        <div class="info-value">
-                                            0.1.0
-                                        </div>
-                                    </div>
-                                    <div class="info-card">
-                                        <div class="info-label">
-                                            Status
-                                        </div>
-                                        <div class="info-value">
-                                            Operational
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </section>
-                    <footer>
-                        Garage Sentinel API · v0.1.0 ·
-                        Running somewhere between production
-                        infrastructure and a laptop on a shelf
-                        in the garage.
-                    </footer>
-                </div>
-                <!-- =================================
-                     OPENAPI
-                ================================== -->
-                <div
-                    id="openapi"
-                    class="doc-page"
-                >
-                    <div class="page-header">
-                        <div class="eyebrow">
-                            Specification
-                        </div>
-                        <h2>
-                            OpenAPI
-                        </h2>
-                        <p>
-                            Garage Sentinel automatically publishes
-                            its machine-readable OpenAPI specification.
-                        </p>
-                    </div>
-                    <section>
-                        <div class="section-title">
-                            <div>
-                                <h3>
-                                    OpenAPI Specification
-                                </h3>
-                                <p>
-                                    Generated automatically by FastAPI.
-                                </p>
-                            </div>
-                        </div>
-                        <a
-                            class="link-card"
-                            href="/openapi.json"
-                            target="_blank"
-                        >
-                            <div>
-                                <strong>
-                                    /openapi.json
-                                </strong>
-                                <br>
-                                <span>
-                                    View the generated OpenAPI schema
-                                </span>
-                            </div>
-                            <div class="arrow">
-                                ↗
-                            </div>
-                        </a>
-                    </section>
-                    <section>
-                        <div class="card">
-                            <div class="endpoint-body">
-                                <div class="label">
-                                    Specification
-                                </div>
-                                <pre>OpenAPI 3.1.0</pre>
-                                <div class="label">
-                                    Content Type
-                                </div>
-                                <pre>application/json</pre>
-                            </div>
-                        </div>
-                    </section>
-                    <footer>
-                        Garage Sentinel API · OpenAPI 3.1
-                    </footer>
-                </div>
-                <!-- =================================
-                     HOME ENDPOINT
-                ================================== -->
-                <div
-                    id="home"
-                    class="doc-page"
-                >
-                    <div class="page-header">
-                        <div class="eyebrow">
-                            Endpoint
-                        </div>
-                        <h2>
-                            Home
-                        </h2>
-                        <p>
-                            Returns the primary Garage Sentinel
-                            application page.
-                        </p>
-                    </div>
-                    <div class="card">
-                        <div class="endpoint-header">
-                            <span class="method">
-                                GET
-                            </span>
-                            <span class="path">
-                                /
-                            </span>
-                        </div>
-                        <div class="endpoint-body">
-                            <p>
-                                Returns the Garage Sentinel homepage.
-                            </p>
-                            <div class="label">
-                                Parameters
-                            </div>
-                            <p>
-                                This endpoint does not require any
-                                parameters.
-                            </p>
-                            <div class="label">
-                                Request
-                            </div>
-                            <pre>GET / HTTP/1.1
-    Host: garage-sentinel</pre>
-                            <div class="label">
-                                Response
-                            </div>
-                            <div class="response-row">
-                                <span class="status">
-                                    200
-                                </span>
-                                <span class="response-type">
-                                    text/html
-                                </span>
-                            </div>
-                            <div class="label">
-                                Example Response
-                            </div>
-                            <pre>&lt;!DOCTYPE html&gt;
-    &lt;html lang="en"&gt;
-        ...
-    &lt;/html&gt;</pre>
-                        </div>
-                    </div>
-                    <footer>
-                        Garage Sentinel API · GET /
-                    </footer>
-                </div>
-                <!-- =================================
-                     TELEMETRY ENDPOINT
-                ================================== -->
-                <div
-                    id="telemetry"
-                    class="doc-page"
-                >
-                    <div class="page-header">
-                        <div class="eyebrow">
-                            Endpoint
-                        </div>
-                        <h2>
-                            Telemetry
-                        </h2>
-                        <p>
-                            Retrieve live system statistics from the
-                            Linux host running Garage Sentinel.
-                        </p>
-                    </div>
-                    <div class="card">
-                        <div class="endpoint-header">
-                            <span class="method">
-                                GET
-                            </span>
-                            <span class="path">
-                                /api/telemetry
-                            </span>
-                        </div>
-                        <div class="endpoint-body">
-                            <p>
-                                Returns current CPU, memory, and
-                                system telemetry collected directly
-                                from the Ubuntu host.
-                            </p>
-                            <div class="label">
-                                Parameters
-                            </div>
-                            <p>
-                                This endpoint does not require any
-                                parameters.
-                            </p>
-                            <div class="label">
-                                Request
-                            </div>
-                            <pre>GET /api/telemetry HTTP/1.1
-    Host: garage-sentinel
-    Accept: application/json</pre>
-                            <div class="label">
-                                Response
-                            </div>
-                            <div class="response-row">
-                                <span class="status">
-                                    200
-                                </span>
-                                <span class="response-type">
-                                    application/json
-                                </span>
-                            </div>
-                            <div class="label">
-                                Example Response
-                            </div>
-                            <pre>{
-        "CPU": {
-            "vendor_id": "GenuineIntel",
-            "model_name": "Intel(R) Core(TM) i7-2630QM CPU @ 2.00GHz",
-            "cpu_frequency_mhz": 800,
-            "cpu_temp_c": 40
-        },
-        "MEMORY": {
-            "mem_total_kb": 16352920,
-            "mem_free_kb": 13535784,
-            "mem_available_kb": 15479248,
-            "mem_used_kb": 873672,
-            "mem_usage_percent": 5.34
-        },
-        "SYSTEM": {
-            "uptime_seconds": 131856.22,
-            "load_15_min": 0.04
-        }
-    }</pre>
-                        </div>
-                    </div>
-                    <section>
-                        <div class="section-title">
-                            <div>
-                                <h3>
-                                    Response Fields
-                                </h3>
-                                <p>
-                                    Current host telemetry categories.
-                                </p>
-                            </div>
-                        </div>
-                        <div class="info-grid">
-                            <div class="info-card">
-                                <div class="info-label">
-                                    CPU
-                                </div>
-                                <div class="info-value">
-                                    Processor information,
-                                    frequency and temperature
-                                </div>
-                            </div>
-                            <div class="info-card">
-                                <div class="info-label">
-                                    Memory
-                                </div>
-                                <div class="info-value">
-                                    RAM capacity,
-                                    availability and usage
-                                </div>
-                            </div>
-                            <div class="info-card">
-                                <div class="info-label">
-                                    System
-                                </div>
-                                <div class="info-value">
-                                    Uptime and Linux load average
-                                </div>
-                            </div>
-                        </div>
-                    </section>
-                    <footer>
-                        Garage Sentinel API · GET /api/telemetry
-                    </footer>
-                </div>
+    
+                <!-- Keep your existing introduction page here -->
+    
+                <!-- Keep your existing OpenAPI page here -->
+    
+                <!-- Endpoint pages generated from JSON -->
+                <div id="endpoint-pages"></div>
+    
             </main>
         </div>
-        <!-- =========================================
-             JAVASCRIPT
-        ========================================== -->
+    
+
         <script>
             function showPage(pageId, clickedLink) {
-                /*
-                    Hide every documentation page.
-                */
-                document
-                    .querySelectorAll(".doc-page")
-                    .forEach(page => {
-                        page.classList.remove("active");
-                    });
-                /*
-                    Remove the highlighted state
-                    from every sidebar item.
-                */
-                document
-                    .querySelectorAll(".nav-link")
-                    .forEach(link => {
-                        link.classList.remove("active");
-                    });
-                /*
-                    Show the selected page.
-                */
-                const selectedPage =
-                    document.getElementById(pageId);
-                if (selectedPage) {
-                    selectedPage.classList.add("active");
+                const selectedPage = document.getElementById(pageId);
+        
+                if (!selectedPage?.classList.contains("doc-page")) {
+                    return;
                 }
-                /*
-                    Highlight the sidebar item
-                    that was clicked.
-                */
-                if (clickedLink) {
-                    clickedLink.classList.add("active");
-                }
-                /*
-                    Bring the new page back to the top
-                    on mobile / smaller screens.
-                */
+        
+                document.querySelectorAll(".doc-page").forEach(page => {
+                    page.classList.remove("active");
+                });
+        
+                document.querySelectorAll(".nav-link").forEach(link => {
+                    link.classList.remove("active");
+                });
+        
+                selectedPage.classList.add("active");
+                clickedLink?.classList.add("active");
+        
+                history.replaceState(null, "", "#" + pageId);
+        
                 window.scrollTo({
                     top: 0,
                     behavior: "smooth"
                 });
-                /*
-                    Update the URL hash without
-                    refreshing the page.
-                    Example:
-                    /docs#telemetry
-                */
-                history.replaceState(
-                    null,
-                    "",
-                    "#" + pageId
-                );
             }
-            /*
-                If somebody directly visits:
-                /docs#telemetry
-                open the correct section automatically.
-            */
-            window.addEventListener(
-                "DOMContentLoaded",
-                () => {
-                    const pageId =
-                        window.location.hash
-                            .replace("#", "");
-                    if (!pageId) {
-                        return;
-                    }
-                    const page =
-                        document.getElementById(pageId);
-                    if (!page) {
-                        return;
-                    }
-                    const links =
-                        document.querySelectorAll(
-                            ".nav-link"
+        
+            // Create an element with optional class and text.
+            function createElement(tag, className = "", text = null) {
+                const element = document.createElement(tag);
+        
+                if (className) {
+                    element.className = className;
+                }
+        
+                if (text !== null && text !== undefined) {
+                    element.textContent = String(text);
+                }
+        
+                return element;
+            }
+        
+            // Create a documentation label.
+            function createLabel(text) {
+                return createElement("div", "label", text);
+            }
+        
+            // Create a formatted code block.
+            function createCodeBlock(content) {
+                const pre = createElement("pre");
+        
+                pre.textContent = typeof content === "string"
+                    ? content
+                    : JSON.stringify(content, null, 4);
+        
+                return pre;
+            }
+        
+            // Create a response status and content-type row.
+            function createResponseRow(endpoint) {
+                const row = createElement("div", "response-row");
+        
+                const status = createElement(
+                    "span",
+                    "status",
+                    endpoint.status ?? 200
+                );
+        
+                const type = createElement(
+                    "span",
+                    "response-type",
+                    endpoint.responseType ?? "application/json"
+                );
+        
+                row.append(status, type);
+        
+                return row;
+            }
+        
+            // Generate the sidebar navigation button.
+            function createNavButton(endpoint) {
+                const button = createElement("button", "nav-link");
+                button.type = "button";
+        
+                const method = createElement(
+                    "span",
+                    "nav-method",
+                    endpoint.method
+                );
+        
+                button.append(
+                    method,
+                    document.createTextNode(" " + endpoint.path)
+                );
+        
+                button.addEventListener("click", () => {
+                    showPage(endpoint.id, button);
+                });
+        
+                return button;
+            }
+        
+            // Generate the parameters section.
+            function createParametersSection(endpoint) {
+                const section = document.createDocumentFragment();
+        
+                section.appendChild(createLabel("Parameters"));
+        
+                const parameters = endpoint.parameters ?? [];
+        
+                if (parameters.length === 0) {
+                    section.appendChild(
+                        createElement(
+                            "p",
+                            "",
+                            "This endpoint does not require any parameters."
+                        )
+                    );
+        
+                    return section;
+                }
+        
+                for (const parameter of parameters) {
+                    const parameterCard = createElement(
+                        "div",
+                        "info-card"
+                    );
+        
+                    const name = createElement(
+                        "div",
+                        "info-label",
+                        parameter.name
+                    );
+        
+                    const details = createElement(
+                        "div",
+                        "info-value"
+                    );
+        
+                    const type = parameter.type ?? "string";
+                    const location = parameter.in ?? "query";
+                    const required = parameter.required
+                        ? "Required"
+                        : "Optional";
+        
+                    details.textContent =
+                        `${type} · ${location} · ${required}`;
+        
+                    const description = createElement(
+                        "p",
+                        "",
+                        parameter.description ?? ""
+                    );
+        
+                    description.style.marginTop = "10px";
+                    description.style.marginBottom = "0";
+        
+                    parameterCard.append(name, details, description);
+        
+                    if (parameter.default !== undefined) {
+                        const defaultValue = createElement(
+                            "p",
+                            "",
+                            `Default: ${parameter.default}`
                         );
-                    let matchingLink = null;
-                    links.forEach(link => {
-                        const onclick =
-                            link.getAttribute("onclick");
-                        if (
-                            onclick &&
-                            onclick.includes(
-                                "'" + pageId + "'"
-                            )
-                        ) {
-                            matchingLink = link;
-                        }
-                    });
-                    showPage(
-                        pageId,
-                        matchingLink
+        
+                        defaultValue.style.marginTop = "8px";
+                        defaultValue.style.marginBottom = "0";
+        
+                        parameterCard.appendChild(defaultValue);
+                    }
+        
+                    parameterCard.style.marginBottom = "12px";
+        
+                    section.appendChild(parameterCard);
+                }
+        
+                return section;
+            }
+        
+            // Generate the request section.
+            function createRequestSection(endpoint) {
+                const section = document.createDocumentFragment();
+        
+                section.appendChild(createLabel("Request"));
+        
+                const method = endpoint.method.toUpperCase();
+                const path = endpoint.path;
+        
+                let request = `${method} ${path} HTTP/1.1\n`;
+                request += "Host: garage-sentinel";
+        
+                if (endpoint.requestType) {
+                    request += `\nContent-Type: ${endpoint.requestType}`;
+                }
+        
+                if (endpoint.responseType) {
+                    const responseType = endpoint.responseType
+                        .split(",")[0]
+                        .trim();
+        
+                    request += `\nAccept: ${responseType}`;
+                }
+        
+                section.appendChild(createCodeBlock(request));
+        
+                return section;
+            }
+        
+            // Generate example response section.
+            function createExampleResponseSection(endpoint) {
+                const section = document.createDocumentFragment();
+        
+                if (endpoint.response === undefined) {
+                    return section;
+                }
+        
+                section.appendChild(createLabel("Example Response"));
+        
+                section.appendChild(
+                    createCodeBlock(endpoint.response)
+                );
+        
+                return section;
+            }
+        
+            // Generate the response fields from example JSON.
+            function createResponseFieldsSection(endpoint) {
+                const response = endpoint.response;
+        
+                if (
+                    response === null ||
+                    typeof response !== "object" ||
+                    Array.isArray(response)
+                ) {
+                    return null;
+                }
+        
+                const entries = Object.entries(response);
+        
+                if (entries.length === 0) {
+                    return null;
+                }
+        
+                const section = createElement("section");
+        
+                const sectionTitle = createElement(
+                    "div",
+                    "section-title"
+                );
+        
+                const headingWrapper = createElement("div");
+        
+                const heading = createElement(
+                    "h3",
+                    "",
+                    "Response Fields"
+                );
+        
+                const subtitle = createElement(
+                    "p",
+                    "",
+                    "Fields returned by this endpoint."
+                );
+        
+                headingWrapper.append(heading, subtitle);
+                sectionTitle.appendChild(headingWrapper);
+        
+                const grid = createElement("div", "info-grid");
+        
+                for (const [key, value] of entries) {
+                    const card = createElement("div", "info-card");
+        
+                    const label = createElement(
+                        "div",
+                        "info-label",
+                        key
+                    );
+        
+                    let description;
+        
+                    if (Array.isArray(value)) {
+                        description = "Array";
+                    } else if (value !== null && typeof value === "object") {
+                        description = Object.keys(value).join(", ");
+                    } else {
+                        description = `${typeof value} · Example: ${value}`;
+                    }
+        
+                    const content = createElement(
+                        "div",
+                        "info-value",
+                        description
+                    );
+        
+                    card.append(label, content);
+                    grid.appendChild(card);
+                }
+        
+                section.append(sectionTitle, grid);
+        
+                return section;
+            }
+        
+            // Generate a complete endpoint documentation page.
+            function createEndpointPage(endpoint) {
+                const page = createElement("div", "doc-page");
+                page.id = endpoint.id;
+        
+                // Page header
+                const header = createElement("div", "page-header");
+        
+                const eyebrow = createElement(
+                    "div",
+                    "eyebrow",
+                    "Endpoint"
+                );
+        
+                const title = createElement(
+                    "h2",
+                    "",
+                    endpoint.name
+                );
+        
+                const description = createElement(
+                    "p",
+                    "",
+                    endpoint.description
+                );
+        
+                header.append(eyebrow, title, description);
+        
+                // Endpoint card
+                const card = createElement("div", "card");
+        
+                const endpointHeader = createElement(
+                    "div",
+                    "endpoint-header"
+                );
+        
+                const method = createElement(
+                    "span",
+                    "method",
+                    endpoint.method
+                );
+        
+                const path = createElement(
+                    "span",
+                    "path",
+                    endpoint.path
+                );
+        
+                endpointHeader.append(method, path);
+        
+                // Endpoint body
+                const body = createElement("div", "endpoint-body");
+        
+                body.appendChild(
+                    createElement(
+                        "p",
+                        "",
+                        endpoint.description
+                    )
+                );
+        
+                body.appendChild(
+                    createParametersSection(endpoint)
+                );
+        
+                body.appendChild(
+                    createRequestSection(endpoint)
+                );
+        
+                if (endpoint.requestType) {
+                    body.appendChild(createLabel("Request Content Type"));
+        
+                    body.appendChild(
+                        createCodeBlock(endpoint.requestType)
                     );
                 }
+        
+                body.appendChild(createLabel("Response"));
+        
+                body.appendChild(
+                    createResponseRow(endpoint)
+                );
+        
+                body.appendChild(
+                    createExampleResponseSection(endpoint)
+                );
+        
+                card.append(endpointHeader, body);
+        
+                page.append(header, card);
+        
+                // Response field descriptions
+                const responseFields = createResponseFieldsSection(endpoint);
+        
+                if (responseFields) {
+                    page.appendChild(responseFields);
+                }
+        
+                // Footer
+                const footer = createElement(
+                    "footer",
+                    "",
+                    `Garage Sentinel API · ${endpoint.method} ${endpoint.path}`
+                );
+        
+                page.appendChild(footer);
+        
+                return page;
+            }
+        
+            // Fetch JSON and generate all endpoint documentation.
+            async function loadEndpoints() {
+                const nav = document.getElementById("endpoint-nav");
+                const pages = document.getElementById("endpoint-pages");
+        
+                if (!nav || !pages) {
+                    console.error("Documentation containers not found.");
+                    return;
+                }
+        
+                try {
+                    const response = await fetch("/static/endpoints.json");
+        
+                    if (!response.ok) {
+                        throw new Error(
+                            `Failed to load endpoints: HTTP ${response.status}`
+                        );
+                    }
+        
+                    const endpoints = await response.json();
+        
+                    if (!Array.isArray(endpoints)) {
+                        throw new Error(
+                            "endpoints.json must contain an array."
+                        );
+                    }
+        
+                    // Clear previously generated content.
+                    nav.replaceChildren();
+                    pages.replaceChildren();
+        
+                    const navFragment = document.createDocumentFragment();
+                    const pageFragment = document.createDocumentFragment();
+        
+                    for (const endpoint of endpoints) {
+                        if (
+                            !endpoint.id ||
+                            !endpoint.name ||
+                            !endpoint.method ||
+                            !endpoint.path
+                        ) {
+                            console.warn("Skipping invalid endpoint:", endpoint);
+                            continue;
+                        }
+        
+                        navFragment.appendChild(
+                            createNavButton(endpoint)
+                        );
+        
+                        pageFragment.appendChild(
+                            createEndpointPage(endpoint)
+                        );
+                    }
+        
+                    nav.appendChild(navFragment);
+                    pages.appendChild(pageFragment);
+        
+                    console.log(
+                        `Loaded ${pages.children.length} API endpoints.`
+                    );
+        
+                    // Restore page selected in URL hash.
+                    const pageId =
+                        decodeURIComponent(window.location.hash.slice(1)) ||
+                        "introduction";
+        
+                    const selectedPage = document.getElementById(pageId);
+        
+                    if (selectedPage?.classList.contains("doc-page")) {
+                        const endpoint = endpoints.find(
+                            item => item.id === pageId
+                        );
+        
+                        let matchingButton = null;
+        
+                        if (endpoint) {
+                            const index = endpoints.indexOf(endpoint);
+                            matchingButton = nav.children[index] ?? null;
+                        } else {
+                            matchingButton = [
+                                ...document.querySelectorAll(".nav-link")
+                            ].find(link => {
+                                const onclick =
+                                    link.getAttribute("onclick") ?? "";
+        
+                                return onclick.includes(`'${pageId}'`);
+                            });
+                        }
+        
+                        showPage(pageId, matchingButton);
+                    } else {
+                        const introduction =
+                            document.getElementById("introduction");
+        
+                        const firstPage =
+                            introduction ?? pages.firstElementChild;
+        
+                        if (firstPage) {
+                            firstPage.classList.add("active");
+                        }
+                    }
+        
+                } catch (error) {
+                    console.error(
+                        "Documentation loading failed:",
+                        error
+                    );
+        
+                    nav.replaceChildren();
+        
+                    nav.appendChild(
+                        createElement(
+                            "p",
+                            "",
+                            "Unable to load API endpoints."
+                        )
+                    );
+                }
+            }
+        
+            document.addEventListener(
+                "DOMContentLoaded",
+                loadEndpoints
             );
         </script>
     </body>

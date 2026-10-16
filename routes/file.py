@@ -8,7 +8,7 @@ from db import database
 from services import file_services
 from services.file_services import storage_path, get_thumbnail
 
-router = APIRouter()
+router = APIRouter(prefix="/api")
 
 MAX_FILE_SIZE = 10 * 1024 * 1024  # 10 MB
 allowed_types = ["png", "jpg", "jpeg", "mp4"]
@@ -93,16 +93,3 @@ async def get_photos():
 async def get_videos():
     videos = await file_services.get_videos()
     return videos
-
-@router.get("/clip/{storage_name}")
-async def get_file(storage_name: str):
-    file_path = storage_path / storage_name
-
-    if not file_path.is_file():
-        raise HTTPException(status_code=404, detail="File not found")
-
-    return FileResponse(
-        path=file_path,
-        media_type="video/mp4",
-        content_disposition_type="inline"
-    )

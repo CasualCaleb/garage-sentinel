@@ -1,0 +1,139 @@
+[
+    {
+        "id": "upload-file",
+        "name": "Upload File",
+        "method": "POST",
+        "path": "/api/file",
+        "description": "Upload an image or video to Garage Sentinel.",
+        "parameters": [
+            {
+                "name": "file",
+                "in": "formData",
+                "required": true,
+                "type": "file",
+                "description": "PNG, JPG, JPEG, or MP4. Maximum size: 10 MiB."
+            }
+        ],
+        "requestType": "multipart/form-data",
+        "responseType": "application/json",
+        "status": 201,
+        "response": {
+            "id": 1
+        }
+    },
+    {
+        "id": "get-file",
+        "name": "Get File",
+        "method": "GET",
+        "path": "/api/file/{storage_name}",
+        "description": "Retrieve an uploaded image or video by its storage name. Images can optionally be returned as thumbnails.",
+        "parameters": [
+            {
+                "name": "storage_name",
+                "in": "path",
+                "required": true,
+                "type": "string",
+                "description": "32-character lowercase hexadecimal storage identifier."
+            },
+            {
+                "name": "size",
+                "in": "query",
+                "required": false,
+                "type": "string",
+                "default": "original",
+                "description": "Set to thumbnail to retrieve a JPEG thumbnail for an image."
+            }
+        ],
+        "responseType": "image/png, image/jpeg, video/mp4",
+        "status": 200,
+        "response": "Binary image or video content."
+    },
+    {
+        "id": "get-photos",
+        "name": "Get Photos",
+        "method": "GET",
+        "path": "/api/photos",
+        "description": "Retrieve the collection of uploaded photos.",
+        "parameters": [],
+        "responseType": "application/json",
+        "status": 200,
+        "response": [
+            {
+              "id": 1,
+              "filename": "AnothaSuds",
+              "filetype": "png",
+              "storage_name": "30c7415ba8528245689bca7ee9c2dbce",
+              "created_at": "2026-10-16 20:11:13"
+            },
+            {
+              "id": 2,
+              "filename": "AnothaTuna",
+              "filetype": "png",
+              "storage_name": "4b31ee43e87a1d6e02054bd93fc8a99e",
+              "created_at": "2026-10-16 20:11:13"
+            },
+            {
+              "id": 3,
+              "filename": "AnotherOneWithSheenaz",
+              "filetype": "png",
+              "storage_name": "9071b1d7714b55a80e8063e621c3547e",
+              "created_at": "2026-10-16 20:11:13"
+            }
+        ]
+    },
+    {
+        "id": "get-videos",
+        "name": "Get Videos",
+        "method": "GET",
+        "path": "/api/videos",
+        "description": "Retrieve the collection of uploaded videos.",
+        "parameters": [],
+        "responseType": "application/json",
+        "status": 200,
+        "response": [
+            {
+              "id": 1,
+              "filename": "FunnyMovies",
+              "filetype": "mp4",
+              "storage_name": "b7fb47564c2ccbc98fd92c853b2e1408",
+              "created_at": "2026-10-16 20:11:04"
+            },
+            {
+              "id": 2,
+              "filename": "GoPissQueen",
+              "filetype": "mp4",
+              "storage_name": "ce069f43c6fbb578eb4567a1b2b547c2",
+              "created_at": "2026-10-16 20:11:04"
+            }
+        ]
+    },
+    {
+        "id": "telemetry",
+        "name": "System Telemetry",
+        "method": "GET",
+        "path": "/api/telemetry",
+        "description": "Retrieve live CPU, memory, and system statistics from the Linux host.",
+        "parameters": [],
+        "responseType": "application/json",
+        "status": 200,
+        "response": {
+            "cpu": {
+                "vendor_id": "GenuineIntel",
+                "model_name": "Intel(R) Core(TM) i7-2630QM CPU @ 2.00GHz",
+                "cpu_frequency_mhz": 800,
+                "cpu_temp_c": 40
+            },
+            "memory": {
+                "mem_total_kb": 16352920,
+                "mem_free_kb": 13535784,
+                "mem_available_kb": 15479248,
+                "mem_used_kb": 873672,
+                "mem_usage_percent": 5.34
+            },
+            "system": {
+                "uptime_seconds": 131856.22,
+                "load_15_min": 0.04
+            }
+        }
+    }
+]
