@@ -203,7 +203,7 @@ def photos():
         <p class="intro">Upload, browse, and revisit your favourite moments.</p>
 
         <div class="upload" id="dropzone" role="button" tabindex="0" aria-label="Upload photos">
-            <div class="upload-icon">🖼️</div>
+            <div class="upload-icon">📸️</div>
             <h2>Drop your photos here</h2>
             <p>Or click to browse your computer</p>
             <span class="formats">PNG · JPG · JPEG</span>
