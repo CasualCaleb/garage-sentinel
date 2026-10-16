@@ -4,7 +4,7 @@ from fastapi.responses import HTMLResponse
 router = APIRouter()
 
 
-@router.get('/photos', response_class=HTMLResponse)
+@router.get('/gallery', response_class=HTMLResponse)
 def photos():
     return """<!DOCTYPE html>
 <html lang="en">
@@ -84,7 +84,10 @@ def photos():
             display: flex; justify-content: space-between; align-items: baseline;
             gap: 16px;
         }
-        .section-heading h2 { font-size: 23px; letter-spacing: -.02em; }
+        .section-heading h2 {
+            font-size: 23px;
+            letter-spacing: -.02em;
+        }
         #photoCount { font-size: 13px; color: var(--muted); }
         .grid {
             display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
@@ -98,11 +101,20 @@ def photos():
             transition: border-color .18s, transform .18s, box-shadow .18s;
         }
         .card:hover {
-            border-color: #36506b; transform: translateY(-3px);
+            border-color: #36506b; transform: scale(1.2);
             box-shadow: 0 18px 42px rgba(0,0,0,.3);
         }
-        .preview { height: 160px; background: var(--panel-soft); display: grid; place-items: center; }
-        .preview img { width: 100%; height: 100%; object-fit: cover; }
+        .preview {
+            height: 160px;
+            background: var(--panel-soft);
+            display: grid;
+            place-items: center;
+        }
+        .preview img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
         .filename {
             padding: 13px 14px; font-size: 13px; font-weight: 500;
             white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
@@ -115,28 +127,29 @@ def photos():
             .grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
             .preview { height: 135px; }
         }
-        .home-button {
+        .nav-button {
             display: inline-flex;
             align-items: center;
             justify-content: center;
             gap: 8px;
+            width: 150px;
             padding: 10px 16px;
             border: 1px solid var(--border);
             border-radius: 10px;
             background: var(--panel-soft);
             color: var(--text);
-            font-size: 13px;
+            font-size: 16px;
             font-weight: 600;
             text-decoration: none;
             white-space: nowrap;
             transition: background .2s, border-color .2s, transform .2s;
         }
-        .home-button:hover {
+        .nav-button:hover {
             background: var(--accent-soft);
             border-color: var(--accent);
             transform: translateY(-1px);
         }
-        .home-button:focus-visible {
+        .nav-button:focus-visible {
             outline: 2px solid var(--accent);
             outline-offset: 3px;
         }
@@ -179,13 +192,13 @@ def photos():
 <body>
     <header>
         <div class="brand">
-            <a class="home-button" href="/">⌂ Home</a>
-            <div class="logo">📸</div>
-            <div><strong>Photo Gallery</strong><span>Your personal photo collection</span></div>
+            <a class="nav-button" href="/">🏠 Home</a>
+            <a class="nav-button" href="/gallery">📸 Photos</a>
+            <a class="nav-button" href="/clips">📹 Clips</a>
         </div>
     </header>
     <main>
-        <div class="eyebrow">Your collection</div>
+        <div class="eyebrow">Your drive</div>
         <h1>Every photo, one place.</h1>
         <p class="intro">Upload, browse, and revisit your favourite moments.</p>
 
@@ -236,12 +249,12 @@ def photos():
             await uploadPhotos(event.dataTransfer.files);
         };
         
-        let visibleCount = 12;
+        const visibleCount = 15;
         let files = [];
         let displayed = 0;
         
         async function getFiles() {
-            const response = await fetch('/files');
+            const response = await fetch('/photos');
             if (!response.ok) throw new Error('Could not load photos');
                     files = await response.json();
         }
@@ -257,7 +270,11 @@ def photos():
                 data.append('file', file);
                 status.textContent = 'Uploading ' + file.name + '...';
                 try {
-                    const response = await fetch('/file', { method: 'POST', body: data });
+                    const response = await fetch('/file', { 
+                    method: 'POST',
+                    body: data
+                    });
+                    
                     if (!response.ok) {
                         const error = await response.json().catch(() => ({}));
                         throw new Error('Upload failed: ' + (error.detail || response.statusText));

@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 from starlette.middleware.cors import CORSMiddleware
-from routes import home, home_photos, telemetry, docs, file
+from routes import home, home_photos, home_clips, telemetry, docs, file
 from contextlib import asynccontextmanager
 from db import database
 
@@ -19,5 +19,6 @@ app.add_middleware(
 app.include_router(docs.router)
 app.include_router(home.router)
 app.include_router(home_photos.router)
+app.include_router(home_clips.router)
 app.include_router(telemetry.router)
 app.include_router(file.router)

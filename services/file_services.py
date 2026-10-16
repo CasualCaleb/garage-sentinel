@@ -1,5 +1,7 @@
-from PIL import Image
+from operator import imatmul
 from pathlib import Path
+from starlette.datastructures import UploadFile
+from fastapi import HTTPException
 from db import database
 import secrets
 from models import File
@@ -12,26 +14,33 @@ storage_path = Path(__file__).resolve().parent.parent / "storage"
 if not storage_path.is_dir():
     storage_path.mkdir()
 
-async def add_image(filename: str, image: Image.Image) -> int:
+async def add_file(filename: str, file_type: str, data: bytes) -> int:
     storage_name = str(secrets.token_hex(nbytes=16))
     file_path = storage_path / storage_name
 
+    # Chop off the ext from the filename (To look pretty)
+    filename = filename.rsplit(".", 1)[0]
+
     try:
-        image.save(file_path, image.format)
+        file_path.write_bytes(data)
 
         file_id = await database.add_file(
             filename=filename,
+            filetype=file_type,
             storage_name=storage_name
         )
+
+        return file_id
 
     except Exception:
         file_path.unlink(missing_ok=True)
         raise
 
-    return file_id
+async def get_photos() -> list[File]:
+    return await database.get_files(["png", "jpg", "jpeg"])
 
-async def get_files() -> list[File]:
-    return await database.get_files()
+async def get_videos() -> list[File]:
+    return await database.get_files(["mp4"])
 
 def get_thumbnail(file_path: Path) -> BytesIO:
     buffer = BytesIO()

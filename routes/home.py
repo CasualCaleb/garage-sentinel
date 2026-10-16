@@ -158,7 +158,6 @@ async def home():
     </head>
 
     <body>
-
         <div class="glow"></div>
 
         <div class="card">
@@ -181,9 +180,7 @@ async def home():
             </div>
 
             <div class="buttons">
-                <a class="primary" href="/photos">
-                    Photos
-                </a>
+                <a class="secondary" href="/gallery">☁️ Drive</a>
                 <a class="secondary" href="/documentation">
                     API Documentation
                 </a>
