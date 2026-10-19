@@ -1,5 +1,6 @@
 CREATE TABLE IF NOT EXISTS files(
     id INTEGER PRIMARY KEY AUTOINCREMENT,
+    user_id INTEGER NOT NULL,
     filename TEXT NOT NULL,
     filetype TEXT NOT NULL,
     storage_name TEXT NOT NULL UNIQUE,

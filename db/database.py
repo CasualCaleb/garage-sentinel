@@ -8,13 +8,13 @@ async def init_db():
     async with get_connection() as conn:
         await conn.executescript(schema_path.read_text())
 
-async def add_file(filename: str, filetype: str, storage_name: str) -> int:
+async def add_file(user_id: int, filename: str, filetype: str, storage_name: str) -> int:
     async with get_connection() as conn:
         cursor = await conn.execute("""
-            INSERT INTO files (filename, filetype, storage_name)
-            VALUES (?, ?, ?)
+            INSERT INTO files (user_id, filename, filetype, storage_name)
+            VALUES (?, ?, ?, ?)
             RETURNING id
-        """, (filename, filetype, storage_name)
+        """, (user_id, filename, filetype, storage_name)
         )
 
         row = await cursor.fetchone()
@@ -23,25 +23,29 @@ async def add_file(filename: str, filetype: str, storage_name: str) -> int:
 
         return row
 
-async def get_files(filetypes: list[str] | None = None) -> list[File]:
+async def get_files_by_user_id(user_id: int, filetypes: list[str] | None = None) -> list[File]:
     async with get_connection() as conn:
         query = "SELECT * FROM files"
         params = []
 
+        query += " WHERE user_id = ?"
+        params.append(user_id)
+
         if filetypes:
-            placeholders = ", ".join("?" for _ in filetypes)
-            query += f" WHERE LOWER(filetype) IN ({placeholders})"
-            params = [ext.lower() for ext in filetypes]
+            placeholders = ",".join("?" for _ in filetypes)
+            query += f" AND filetype IN ({placeholders})"
+            params.extend(filetypes)
 
         cursor = await conn.execute(query, params)
 
         files = [
             File(
                 id=row[0],
-                filename=row[1],
-                filetype=row[2],
-                storage_name=row[3],
-                created_at=row[4],
+                user_id=row[1],
+                filename=row[2],
+                filetype=row[3],
+                storage_name=row[4],
+                created_at=row[5],
             )
             for row in await cursor.fetchall()
         ]
@@ -61,27 +65,9 @@ async def get_file_by_storage_name(storage_name: str) -> File:
 
         return File(
             id=row[0],
-            filename=row[1],
-            filetype=row[2],
-            storage_name=row[3],
-            created_at=row[4],
-        )
-
-async def get_file_by_id(file_id: int) -> File:
-    async with get_connection() as conn:
-        cursor = await conn.execute("""
-            SELECT *
-            FROM files
-            WHERE id = ?
-        """, (file_id,)
-        )
-
-        row = await cursor.fetchone()
-
-        return File(
-            id=row[0],
-            filename=row[1],
-            filetype=row[2],
-            storage_name=row[3],
-            created_at=row[4],
+            user_id=row[1],
+            filename=row[2],
+            filetype=row[3],
+            storage_name=row[4],
+            created_at=row[5],
         )

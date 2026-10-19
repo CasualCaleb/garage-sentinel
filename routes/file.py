@@ -1,12 +1,11 @@
 import re
-from PIL import Image, UnidentifiedImageError
-from io import BytesIO
-from fastapi import APIRouter, UploadFile, File, HTTPException
+from fastapi import APIRouter, UploadFile, File, HTTPException, Request
 from fastapi.responses import FileResponse, StreamingResponse
 import models.file as file_model
 from db import database
 from services import file_services
 from services.file_services import storage_path, get_thumbnail
+from routes.auth import validate_current_user
 
 router = APIRouter(prefix="/api")
 
@@ -28,8 +27,10 @@ async def validate_file(file: UploadFile) -> str:
     return extension
 
 @router.post("/file", status_code=201)
-async def upload_file(file: UploadFile = File(...)):
+async def upload_file(request: Request, file: UploadFile = File(...)):
     filename = file.filename
+
+    user_id = await validate_current_user(request)
 
     if not isinstance(filename, str):
         raise HTTPException(status_code=400, detail="Filename missing")
@@ -42,8 +43,9 @@ async def upload_file(file: UploadFile = File(...)):
 
     file_id = await file_services.add_file(
         filename=filename,
+        user_id=user_id,
         file_type=file_type,
-        data= data
+        data=data
     )
 
     return {"id": file_id}
@@ -85,11 +87,15 @@ async def get_file(storage_name: str, size: str = "original"):
     )
 
 @router.get("/photos")
-async def get_photos():
-    photos = await file_services.get_photos()
+async def get_photos(request: Request):
+    user_id = await validate_current_user(request)
+
+    photos = await file_services.get_files(user_id)
     return photos
 
 @router.get("/videos")
-async def get_videos():
-    videos = await file_services.get_videos()
+async def get_videos(request: Request):
+    user_id = await validate_current_user(request)
+
+    videos = await file_services.get_files(user_id, file_types=["mp4"])
     return videos
