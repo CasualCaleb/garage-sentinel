@@ -7,3 +7,9 @@ class File(BaseModel):
     filetype: str
     storage_name: str
     created_at: str
+
+class CreateFile(BaseModel):
+    user_id: int
+    filename: str
+    filetype: str
+    storage_name: str

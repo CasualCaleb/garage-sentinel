@@ -1,7 +1,7 @@
 from pathlib import Path
 from db import database
 import secrets
-from models import File
+from models import File, CreateFile
 from PIL import Image, ImageOps
 from io import BytesIO
 
@@ -11,7 +11,7 @@ storage_path = Path(__file__).resolve().parent.parent / "storage"
 if not storage_path.is_dir():
     storage_path.mkdir()
 
-async def add_file(user_id: int, filename: str, file_type: str, data: bytes) -> int:
+async def add_file(user_id: int, filename: str, file_type: str, data: bytes) -> File:
     storage_name = str(secrets.token_hex(nbytes=16))
     file_path = storage_path / storage_name
 
@@ -24,14 +24,15 @@ async def add_file(user_id: int, filename: str, file_type: str, data: bytes) -> 
         if bytes_written != len(data):
             raise IOError("Incomplete file write")
 
-        file_id = await database.add_file(
+        file = await database.add_file(CreateFile(
             user_id=user_id,
             filename=filename,
             filetype=file_type,
             storage_name=storage_name
+            )
         )
 
-        return file_id
+        return file
 
     except Exception:
         file_path.unlink(missing_ok=True)

@@ -1,11 +1,15 @@
 from fastapi import APIRouter
-from fastapi.responses import HTMLResponse
+from fastapi.responses import HTMLResponse, RedirectResponse
+from fastapi import Request
+from routes.auth import get_current_user
 
 router = APIRouter()
 
-
 @router.get('/gallery', response_class=HTMLResponse)
-def photos():
+async def photos(request: Request):
+    if await get_current_user(request) is None:
+        return RedirectResponse(url="/login")
+
     return """<!DOCTYPE html>
 <html lang="en">
 <head>
@@ -225,6 +229,11 @@ def photos():
             <a class="nav-button" href="/gallery">📸 Photos</a>
             <a class="nav-button" href="/clips">📹 Clips</a>
             <a class="nav-button" href="/documentation">🗿 Docs</a>
+            <a class="nav-button"
+                onclick="logout(event)"
+                style="margin-left: auto; color: #f87171; border-color: rgba(248, 113, 113, 0.25); cursor: pointer;">
+                Logout
+            </a>
         </div>
     </header>
     <main>
@@ -372,6 +381,24 @@ def photos():
             }
             if (displayed === files.length) {
                 document.getElementById('show-more')?.remove()
+            }
+        }
+        async function logout(event) {
+            event.preventDefault();
+        
+            try {
+                const response = await fetch('/api/auth/logout', {
+                    method: 'POST'
+                });
+        
+                if (!response.ok) {
+                    throw new Error('Logout failed');
+                }
+        
+                window.location.href = '/login';
+        
+            } catch (error) {
+                console.error(error);
             }
         }
         loadPhotos();

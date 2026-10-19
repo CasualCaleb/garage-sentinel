@@ -66,4 +66,5 @@ jobs:
             -p 8000:8000 \
             --mount type=bind,source=/srv/garage-sentinel/storage,target=/app/storage \
             --mount type=bind,source=/srv/garage-sentinel/db/database.db,target=/app/db/database.db \
+            --env-file /srv/garage-sentinel/.env \
             ghcr.io/casualcaleb/garage-sentinel:latest
