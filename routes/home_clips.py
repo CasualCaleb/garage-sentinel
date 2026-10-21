@@ -265,14 +265,18 @@ async def clips(request: Request):
             <a class="nav-button" href="/documentation">🗿 Docs</a>
             <a class="nav-button"
                 onclick="logout(event)"
-                style="margin-left: auto; color: #f87171; border-color: rgba(248, 113, 113, 0.25); cursor: pointer;">
+                style="width: 110px; margin-left: auto; color: #f87171; border-color: rgba(248, 113, 113, 0.25); cursor: pointer;">
                 Logout
+            </a>
+            <a class="nav-button"
+                style="width: 110px; color: rgba(255, 255, 255); border-color: rgba(255, 255, 255, 0.25); cursor: pointer;">
+                ⚙️ Account
             </a>
         </div>
     </header>
     <main>
         <div class="eyebrow-container">
-            <div class="eyebrow">Your clips</div>
+            <div class="eyebrow" id="eyebrow"></div>
             <h1>Every clip, one place.</h1>
             <p class="intro">Upload, browse, and relive your favourite moments.</p>
         </div class="eyebrow-container">
@@ -320,6 +324,16 @@ async def clips(request: Request):
             e.preventDefault();
             uploadClips(e.dataTransfer.files);
         });
+        
+        async function loadUsername() {
+            const response = await fetch("/api/users/me");
+            const data = await response.json();
+            
+            console.log(data);
+            
+            document.getElementById("eyebrow").textContent = `${data.username}'s Clips`;
+        }
+        loadUsername();
     
         async function uploadClips(files) {
             for (const file of files) {
