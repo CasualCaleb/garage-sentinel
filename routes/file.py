@@ -2,6 +2,7 @@ import re
 from fastapi import APIRouter, UploadFile, File, HTTPException, Request
 from fastapi.responses import FileResponse, StreamingResponse
 import models.file as file_model
+from models import User
 from db import database
 from services import file_services
 from services.file_services import storage_path, get_thumbnail
@@ -29,9 +30,9 @@ async def validate_file(file: UploadFile) -> str:
 @router.post("/file", status_code=201)
 async def upload_file(request: Request, file: UploadFile = File(...)):
     filename = file.filename
-    user_id = await get_current_user(request)
+    user = await get_current_user(request)
 
-    if not isinstance(user_id, int):
+    if not isinstance(user, User):
         raise HTTPException(status_code=401, detail="Not logged in")
 
     if not isinstance(filename, str):
@@ -45,7 +46,7 @@ async def upload_file(request: Request, file: UploadFile = File(...)):
 
     file_id = await file_services.add_file(
         filename=filename,
-        user_id=user_id,
+        user_id=user.id,
         file_type=file_type,
         data=data
     )
@@ -90,26 +91,26 @@ async def get_file(storage_name: str, size: str = "original"):
 
 @router.get("/photos")
 async def get_photos(request: Request):
-    user_id = await get_current_user(request)
+    user = await get_current_user(request)
 
-    if not isinstance(user_id, int):
+    if not isinstance(user, User):
         raise HTTPException(
             status_code=401,
             detail="Not logged in",
         )
 
-    photos = await file_services.get_files(user_id)
+    photos = await file_services.get_files(user.id)
     return photos
 
 @router.get("/videos")
 async def get_videos(request: Request):
-    user_id = await get_current_user(request)
+    user = await get_current_user(request)
 
-    if not isinstance(user_id, int):
+    if not isinstance(user, User):
         raise HTTPException(
             status_code=401,
             detail="Not logged in",
         )
 
-    videos = await file_services.get_files(user_id, file_types=["mp4"])
+    videos = await file_services.get_files(user.id, file_types=["mp4"])
     return videos
