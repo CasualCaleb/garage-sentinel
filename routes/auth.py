@@ -1,7 +1,7 @@
 from authlib.integrations.starlette_client import OAuth
 from fastapi import APIRouter, Request, HTTPException
 from fastapi.responses import RedirectResponse
-from config import GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET, DISCORD_CLIENT_ID, DISCORD_CLIENT_SECRET
+from config import GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET, DISCORD_CLIENT_ID, DISCORD_CLIENT_SECRET, GITHUB_CLIENT_ID, GITHUB_CLIENT_SECRET
 from models import User, OauthAccount, CreateUser, CreateOauthAccount, PendingRegistration, CreatePendingRegistration
 from services import user_services, auth_services
 import secrets
@@ -27,6 +27,17 @@ oauth.register(
     api_base_url="https://discord.com/api/",
     client_kwargs={
         "scope": "identify email"
+    }
+)
+oauth.register(
+    name="github",
+    client_id=GITHUB_CLIENT_ID,
+    client_secret=GITHUB_CLIENT_SECRET,
+    authorize_url="https://github.com/login/oauth/authorize",
+    access_token_url="https://github.com/login/oauth/access_token",
+    api_base_url="https://api.github.com/",
+    client_kwargs={
+        "scope": "read:user user:email"
     }
 )
 
@@ -106,6 +117,34 @@ async def get_oauth_user_data(request: Request, provider: str) -> dict:
             'username': user_data['username'],
             'provider_id': user_data['id'],
             'provider_email': user_data['email'],
+        }
+    elif provider == 'github':
+        response = await oauth_client.get("user", token=token)
+        response.raise_for_status()
+        user_data = response.json()
+
+        email = user_data.get("email")
+
+        if email is None:
+            response = await oauth_client.get("user/emails", token=token)
+            response.raise_for_status()
+
+            emails = response.json()
+
+            email = next(
+                (
+                    item["email"]
+                    for item in emails
+                    if item["primary"] and item["verified"]
+                ),
+                None
+            )
+
+        return {
+            'provider': 'github',
+            'username': user_data['login'],
+            'provider_id': str(user_data['id']),
+            'provider_email': email,    # <-- Emails for GitHub may be null if set to private
         }
 
     raise HTTPException(
