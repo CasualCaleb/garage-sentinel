@@ -1,5 +1,6 @@
-from models import User, OauthAccount, CreateUser, CreateOauthAccount
+from models import User, OauthAccount, CreateUser, CreateOauthAccount, PendingRegistration, CreatePendingRegistration
 from db import database
+import hashlib
 
 async def record_logout(user: User) -> bool:
     return await database.log_activity(
@@ -45,3 +46,15 @@ async def register_user(create_user: CreateUser, create_oauth_account: CreateOau
     )
 
     return user, oauth_account
+
+async def create_pending_registration(token: str, create_pending: CreatePendingRegistration) -> PendingRegistration:
+    token_hash = hashlib.sha256(token.encode()).hexdigest()
+    return await database.create_pending_registration(token_hash, create_pending)
+
+async def find_pending_registration(token: str) -> PendingRegistration | None:
+    token_hash = hashlib.sha256(token.encode()).hexdigest()
+    return await database.find_pending_registration(token_hash=token_hash)
+
+async def check_matching_email(provider_email) -> bool:
+    match_id = await database.get_user_id_by_provider_email(provider_email)
+    return match_id is not None

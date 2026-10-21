@@ -5,7 +5,7 @@ import models.file as file_model
 from db import database
 from services import file_services
 from services.file_services import storage_path, get_thumbnail
-from routes.auth import validate_current_user
+from routes.auth import get_current_user
 
 router = APIRouter(prefix="/api")
 
@@ -29,8 +29,10 @@ async def validate_file(file: UploadFile) -> str:
 @router.post("/file", status_code=201)
 async def upload_file(request: Request, file: UploadFile = File(...)):
     filename = file.filename
+    user_id = await get_current_user(request)
 
-    user_id = await validate_current_user(request)
+    if not isinstance(user_id, int):
+        raise HTTPException(status_code=401, detail="Not logged in")
 
     if not isinstance(filename, str):
         raise HTTPException(status_code=400, detail="Filename missing")
@@ -88,14 +90,26 @@ async def get_file(storage_name: str, size: str = "original"):
 
 @router.get("/photos")
 async def get_photos(request: Request):
-    user_id = await validate_current_user(request)
+    user_id = await get_current_user(request)
+
+    if not isinstance(user_id, int):
+        raise HTTPException(
+            status_code=401,
+            detail="Not logged in",
+        )
 
     photos = await file_services.get_files(user_id)
     return photos
 
 @router.get("/videos")
 async def get_videos(request: Request):
-    user_id = await validate_current_user(request)
+    user_id = await get_current_user(request)
+
+    if not isinstance(user_id, int):
+        raise HTTPException(
+            status_code=401,
+            detail="Not logged in",
+        )
 
     videos = await file_services.get_files(user_id, file_types=["mp4"])
     return videos

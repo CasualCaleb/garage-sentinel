@@ -2,8 +2,9 @@ from authlib.integrations.starlette_client import OAuth
 from fastapi import APIRouter, Request, HTTPException
 from fastapi.responses import RedirectResponse
 from config import GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET, DISCORD_CLIENT_ID, DISCORD_CLIENT_SECRET
-from models import User, OauthAccount, CreateUser, CreateOauthAccount
+from models import User, OauthAccount, CreateUser, CreateOauthAccount, PendingRegistration, CreatePendingRegistration
 from services import user_services, auth_services
+import secrets
 
 router = APIRouter(prefix="/api/auth")
 oauth = OAuth()
@@ -112,7 +113,7 @@ async def get_oauth_user_data(request: Request, provider: str) -> dict:
         detail="Oauth provider not supported"
     )
 
-async def validate_oauth_account(request: Request, oauth_data) -> User:
+async def validate_oauth_account(request: Request, oauth_data) -> User | PendingRegistration:
     current_user = await get_current_user(request)
     oauth_account = await auth_services.get_oauth_account(
         oauth_data['provider'],
@@ -138,7 +139,8 @@ async def validate_oauth_account(request: Request, oauth_data) -> User:
                     provider=oauth_data['provider'],
                     provider_id=oauth_data['provider_id'],
                     provider_email=oauth_data['provider_email'],
-                ))
+                )
+            )
 
             return current_user
 
@@ -153,6 +155,23 @@ async def validate_oauth_account(request: Request, oauth_data) -> User:
             )
 
         return user
+
+    # Check if any Users have a matching email
+    if await auth_services.check_matching_email(oauth_data['provider_email']):
+        token = secrets.token_urlsafe(32)
+
+        create_pending = CreatePendingRegistration(
+                username=oauth_data['username'],
+                provider=oauth_data['provider'],
+                provider_id=oauth_data['provider_id'],
+                provider_email=oauth_data['provider_email']
+            )
+
+        pending_registration = await auth_services.create_pending_registration(token, create_pending)
+
+        request.session["pending_registration"] = token
+
+        return pending_registration
 
     # Logic for registering a new user
     new_user, _ = await auth_services.register_user(
@@ -184,23 +203,54 @@ async def get_current_user(request: Request) -> User | None:
 @router.get("/callback/{provider}", name="auth_callback")
 async def auth_callback(request: Request, provider: str):
     oauth_data = await get_oauth_user_data(request, provider)
-    validated_user = await validate_oauth_account(request, oauth_data)
+    result = await validate_oauth_account(request, oauth_data)
+
+    # If we find a matching email while registering a new user
+    if isinstance(result, PendingRegistration):
+        return RedirectResponse(url="/registration/confirm")
 
     # Save user id to session
-    request.session['user_id'] = validated_user.id
+    request.session['user_id'] = result.id
 
-    await auth_services.record_login(validated_user)
+    await auth_services.record_login(result)
 
     return RedirectResponse(url="/gallery")
 
-async def validate_current_user(request: Request) -> int:
-    user_id = request.session.get("user_id")
+@router.post("/registration/confirm")
+async def confirm_registration(request: Request):
+    token = request.session.get("pending_registration")
 
-    if not isinstance(user_id, int):
+    if not isinstance(token, str):
         raise HTTPException(
-            status_code=401,
-            detail="User not logged in",
+            status_code=404,
+            detail="Pending registration not found"
         )
 
-    return user_id
+    pending = await auth_services.find_pending_registration(token)
 
+    if not isinstance(pending, PendingRegistration):
+        raise HTTPException(
+            status_code=400,
+            detail="Error finding pending registration session"
+        )
+
+    # Logic for registering a new user
+    new_user, _ = await auth_services.register_user(
+        CreateUser(
+            username=pending.username
+        ),
+        CreateOauthAccount(
+            provider=pending.provider,
+            provider_id=pending.provider_id,
+            provider_email=pending.provider_email
+        )
+    )
+
+    request.session['user_id'] = new_user.id
+
+    await auth_services.record_login(new_user)
+
+    return RedirectResponse(
+        url="/gallery",
+        status_code=303
+    )

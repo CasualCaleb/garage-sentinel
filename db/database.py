@@ -1,5 +1,5 @@
 from db.connection import get_connection
-from models import User, CreateUser, OauthAccount, CreateOauthAccount, CreateFile, File
+from models import User, CreateUser, OauthAccount, CreateOauthAccount, CreateFile, File, PendingRegistration, CreatePendingRegistration
 from pathlib import Path
 
 schema_path = Path(__file__).parent / "schema.sql"
@@ -25,6 +25,22 @@ async def get_user_by_id(user_id: int) -> User | None:
             username=row[1],
             role=row[2]
         )
+
+async def get_user_id_by_provider_email(provider_email: str) -> int | None:
+    async with get_connection() as conn:
+        cursor = await conn.execute("""
+            SELECT user_id
+            FROM oauth_accounts
+            WHERE LOWER(provider_email) = LOWER(?)
+            LIMIT 1
+        """, (provider_email,))
+
+        row = await cursor.fetchone()
+
+        if row is None:
+            return None
+
+        return row[0]
 
 async def get_users() -> list[User]:
     async with get_connection() as conn:
@@ -103,6 +119,51 @@ async def create_user_with_oauth(create_user: CreateUser, create_oauth_account: 
         await conn.commit()
 
         return user, oauth_account
+
+async def create_pending_registration(token_hash: str, create_pending: CreatePendingRegistration) -> PendingRegistration:
+    async with get_connection() as conn:
+        await conn.execute("""
+            INSERT INTO pending_registration (token_hash, username, provider, provider_id, provider_email)
+            VALUES (?, ?, ?, ?, ?)
+        """, (
+            token_hash,
+            create_pending.username,
+            create_pending.provider,
+            create_pending.provider_id,
+            create_pending.provider_email
+            )
+        )
+
+        await conn.commit()
+
+        return PendingRegistration(
+            token_hash=token_hash,
+            username=create_pending.username,
+            provider=create_pending.provider,
+            provider_id=create_pending.provider_id,
+            provider_email=create_pending.provider_email
+        )
+
+async def find_pending_registration(token_hash: str) -> PendingRegistration | None:
+    async with get_connection() as conn:
+        cursor = await conn.execute("""
+            SELECT *
+            FROM pending_registration
+            WHERE token_hash = ?
+        """, (token_hash,))
+
+        row = await cursor.fetchone()
+
+        if row is None:
+            return None
+
+        return PendingRegistration(
+            token_hash=row[0],
+            username=row[1],
+            provider=row[2],
+            provider_id=row[3],
+            provider_email=row[4]
+        )
 
 async def link_oauth_account(user: User, create_oauth_account: CreateOauthAccount) -> OauthAccount:
     async with get_connection() as conn:
