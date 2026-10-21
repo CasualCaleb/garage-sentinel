@@ -5,4 +5,4 @@ pillow
 aiosqlite
 itsdangerous
 authlib
-httpx
+httpx2
