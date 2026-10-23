@@ -1,5 +1,5 @@
 from db import database
-from models import User
+from models import User, OauthAccount
 
 async def get_user(user_id: int) -> User | None:
     return await database.get_user_by_id(user_id)
@@ -30,3 +30,6 @@ async def delete_user(user_id: int) -> bool:
         )
 
     return is_deleted
+
+async def get_oauth_accounts(user: User) -> list[OauthAccount]:
+    return await database.get_oauth_accounts_by_user_id(user.id)

@@ -56,6 +56,10 @@ async def login(request: Request, provider: str):
         provider=provider
     )
 
+    # If the provider is Discord we need to set prompt to "none" so that a returning user isn't prompted
+    if provider == "discord":
+        return await oauth_client.authorize_redirect(request, redirect_uri, prompt="none")
+
     return await oauth_client.authorize_redirect(request, redirect_uri)
 
 @router.post("/logout")

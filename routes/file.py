@@ -10,7 +10,7 @@ from routes.auth import get_current_user
 
 router = APIRouter(prefix="/api")
 
-MAX_FILE_SIZE = 10 * 1024 * 1024  # 10 MB
+MAX_FILE_SIZE = 250 * 1024 * 1024  # 200 MiB
 allowed_types = ["png", "jpg", "jpeg", "mp4"]
 
 async def validate_file(file: UploadFile) -> str:
@@ -23,7 +23,10 @@ async def validate_file(file: UploadFile) -> str:
         raise HTTPException(415, "Unsupported file format")
 
     if file.size is not None and file.size > MAX_FILE_SIZE:
-        raise HTTPException(413, f"File too large")
+        raise HTTPException(
+            413,
+            f"File too large. Maximum allowed size is {MAX_FILE_SIZE // 1024 ** 2} MB."
+        )
 
     return extension
 

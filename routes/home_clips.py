@@ -269,6 +269,7 @@ async def clips(request: Request):
                 Logout
             </a>
             <a class="nav-button"
+                href="/account"
                 style="width: 110px; color: rgba(255, 255, 255); border-color: rgba(255, 255, 255, 0.25); cursor: pointer;">
                 ⚙️ Account
             </a>
@@ -331,7 +332,7 @@ async def clips(request: Request):
             
             console.log(data);
             
-            document.getElementById("eyebrow").textContent = `${data.username}'s Clips`;
+            document.getElementById("eyebrow").textContent = `${data.user.username}'s Clips`;
         }
         loadUsername();
     

@@ -120,51 +120,6 @@ async def create_user_with_oauth(create_user: CreateUser, create_oauth_account: 
 
         return user, oauth_account
 
-async def create_pending_registration(token_hash: str, create_pending: CreatePendingRegistration) -> PendingRegistration:
-    async with get_connection() as conn:
-        await conn.execute("""
-            INSERT INTO pending_registration (token_hash, username, provider, provider_id, provider_email)
-            VALUES (?, ?, ?, ?, ?)
-        """, (
-            token_hash,
-            create_pending.username,
-            create_pending.provider,
-            create_pending.provider_id,
-            create_pending.provider_email
-            )
-        )
-
-        await conn.commit()
-
-        return PendingRegistration(
-            token_hash=token_hash,
-            username=create_pending.username,
-            provider=create_pending.provider,
-            provider_id=create_pending.provider_id,
-            provider_email=create_pending.provider_email
-        )
-
-async def find_pending_registration(token_hash: str) -> PendingRegistration | None:
-    async with get_connection() as conn:
-        cursor = await conn.execute("""
-            SELECT *
-            FROM pending_registration
-            WHERE token_hash = ?
-        """, (token_hash,))
-
-        row = await cursor.fetchone()
-
-        if row is None:
-            return None
-
-        return PendingRegistration(
-            token_hash=row[0],
-            username=row[1],
-            provider=row[2],
-            provider_id=row[3],
-            provider_email=row[4]
-        )
-
 async def link_oauth_account(user: User, create_oauth_account: CreateOauthAccount) -> OauthAccount:
     async with get_connection() as conn:
         cursor = await conn.execute("""
@@ -332,3 +287,57 @@ async def log_activity(user_id: int, action: str, details: str) -> bool:
         await conn.commit()
 
         return cursor.rowcount > 0
+
+async def create_pending_registration(token_hash: str, create_pending: CreatePendingRegistration) -> PendingRegistration:
+    async with get_connection() as conn:
+        await conn.execute("""
+            INSERT INTO pending_registrations (token_hash, username, provider, provider_id, provider_email)
+            VALUES (?, ?, ?, ?, ?)
+        """, (
+            token_hash,
+            create_pending.username,
+            create_pending.provider,
+            create_pending.provider_id,
+            create_pending.provider_email
+            )
+        )
+
+        await conn.commit()
+
+        return PendingRegistration(
+            token_hash=token_hash,
+            username=create_pending.username,
+            provider=create_pending.provider,
+            provider_id=create_pending.provider_id,
+            provider_email=create_pending.provider_email
+        )
+
+async def find_pending_registration(token_hash: str) -> PendingRegistration | None:
+    async with get_connection() as conn:
+        cursor = await conn.execute("""
+            SELECT *
+            FROM pending_registrations
+            WHERE token_hash = ?
+        """, (token_hash,))
+
+        row = await cursor.fetchone()
+
+        if row is None:
+            return None
+
+        return PendingRegistration(
+            token_hash=row[0],
+            username=row[1],
+            provider=row[2],
+            provider_id=row[3],
+            provider_email=row[4]
+        )
+
+async def delete_expired_registrations():
+    async with get_connection() as conn:
+        await conn.execute("""
+            DELETE FROM pending_registrations
+            WHERE created_at <= datetime('now', '-10 minutes')
+        """)
+
+        await conn.commit()

@@ -26,11 +26,17 @@ router = APIRouter(
 )
 
 # Get current user info
-@router.get("/me", response_model=User, name="me")
-async def read_users_me(
+@router.get("/me", name="me")
+async def read_user_oauth_accounts(
         user: User = Depends(require_user)
 ):
-    return user
+    oauth_accounts = await user_services.get_oauth_accounts(user)
+    return {
+        'user': user,
+        'oauth_accounts': [
+            oauth_account for oauth_account in oauth_accounts
+        ]
+    }
 
 # Change the current user's username
 @router.patch("/me/username", name="username")

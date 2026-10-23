@@ -17,12 +17,13 @@ CREATE TABLE IF NOT EXISTS oauth_accounts(
     UNIQUE(provider, provider_id),
     UNIQUE(user_id, provider)
 );
-CREATE TABLE IF NOT EXISTS pending_registration(
+CREATE TABLE IF NOT EXISTS pending_registrations(
     token_hash TEXT PRIMARY KEY,
     username TEXT NOT NULL,
     provider TEXT NOT NULL,
     provider_id TEXT NOT NULL,
-    provider_email TEXT
+    provider_email TEXT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 CREATE TABLE IF NOT EXISTS files(
     id INTEGER PRIMARY KEY AUTOINCREMENT,
