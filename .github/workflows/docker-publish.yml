@@ -1,16 +1,20 @@
 name: Build and Deploy
 
 on:
-  push:
-    branches:
-      - main
+  release:
+    types: [published]
 
 env:
   REGISTRY: ghcr.io
   IMAGE_NAME: casualcaleb/garage-sentinel
 
+concurrency:
+  group: garage-sentinel-production
+  cancel-in-progress: false
+
 jobs:
   build:
+    if: ${{ !github.event.release.prerelease }}
     runs-on: ubuntu-latest
 
     permissions:
@@ -34,8 +38,8 @@ jobs:
           context: .
           push: true
           tags: |
-            ghcr.io/casualcaleb/garage-sentinel:latest
-            ghcr.io/casualcaleb/garage-sentinel:${{ github.sha }}
+            ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
+            ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ github.sha }}
 
   deploy:
     needs: build
@@ -53,18 +57,21 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Pull latest image
-        run: docker pull ghcr.io/casualcaleb/garage-sentinel:latest
-
-      - name: Replace running container
+      - name: Deploy with Docker Compose
+        working-directory: /srv/garage-sentinel
         run: |
-          docker rm -f garage-sentinel || true
+          docker compose pull
+          docker compose up -d --no-build --remove-orphans
 
-          docker run -d \
-            --name garage-sentinel \
-            --restart unless-stopped \
-            -p 8000:8000 \
-            --mount type=bind,source=/srv/garage-sentinel/storage,target=/app/storage \
-            --mount type=bind,source=/srv/garage-sentinel/db/database.db,target=/app/db/database.db \
-            --env-file /srv/garage-sentinel/.env \
-            ghcr.io/casualcaleb/garage-sentinel:latest
+      - name: Verify deployment
+        working-directory: /srv/garage-sentinel
+        run: |
+          docker compose ps
+          curl --fail --silent --show-error \
+            --retry 10 \
+            --retry-delay 3 \
+            --retry-connrefused \
+            --connect-timeout 2 \
+            --max-time 5 \
+            http://localhost:8000/ \
+            --output /dev/null
