@@ -43,9 +43,6 @@ The workflow serializes production deployments to avoid overlapping release jobs
 
 - Upload and retrieve supported **PNG, JPG/JPEG, and MP4** files through FastAPI endpoints.
 - Browse dedicated **photo and video galleries** from a web browser.
-- Generate resized **JPEG thumbnails** with Pillow, including EXIF orientation handling.
-- Separate human-readable filenames from **random 128-bit hexadecimal storage identifiers**.
-- Persist file metadata in SQLite and file bytes in dedicated server storage.
 - Validate file extensions and reject oversized uploads; the current code sets a **250 MiB** maximum constant (actual reverse-proxy and runtime limits may also apply).
 - Clean up written files when a subsequent metadata operation fails.
 
@@ -54,11 +51,7 @@ The workflow serializes production deployments to avoid overlapping release jobs
 - Sign in with **Google, Discord, or GitHub** through Authlib OAuth integrations.
 - Maintain signed, session-based authentication using Starlette middleware.
 - Link multiple OAuth identities to an existing account, with checks to prevent linking a provider identity already owned by another user.
-- Handle matching-email registration cases with a **pending-confirmation flow**, rather than silently merging accounts.
 - Generate high-entropy registration tokens and store **SHA-256 hashes** instead of raw token values.
-- Run a background task to clean up expired pending registrations.
-- Provide user account management and **role-restricted administrative endpoints**.
-- Record authentication and account activity in an activity log.
 
 ### Live server visibility
 
@@ -73,38 +66,6 @@ This gives the application visibility into the machine hosting it, rather than o
 ### Remote access with Tailscale
 
 Garage Sentinel is accessible remotely over my **Tailscale private network**, letting me reach my cloud storage while away from home. This provides a practical private-network access model without directly publishing the app's port to the public internet. OAuth redirect URIs must be configured to match the hostname and scheme used for access.
-
-## Technology stack
-
-| Layer | Technology |
-| --- | --- |
-| Backend | Python 3.12, FastAPI, Uvicorn, Pydantic |
-| Authentication | Authlib OAuth, Starlette sessions |
-| Persistence | SQLite, aiosqlite |
-| Media processing | Pillow |
-| Web UI | Server-served HTML/CSS/JavaScript |
-| Containers | Docker, Docker Compose |
-| CI/CD | GitHub Actions, GHCR, self-hosted Linux runner |
-| Host / networking | Ubuntu Server, Tailscale |
-| Testing | pytest, pytest-asyncio, FastAPI TestClient, mocked OAuth flows |
-
-## Repository structure
-
-```text
-.
-├── .github/workflows/docker-publish.yml  # Release-triggered build/deploy
-├── Dockerfile                            # Python 3.12 application image
-├── main.py                               # FastAPI application and router setup
-├── config.py                             # Environment-based secrets/config
-├── db/                                   # SQLite connection, schema, queries
-├── models/                               # Typed application models
-├── routes/                               # API and web-page routes
-├── services/                             # Auth, files, users, admin logic
-├── tasks/                                # Lifespan and registration cleanup
-├── exceptions/                           # Custom HTTP error handling
-├── static/                               # Static application assets
-└── tests/                                # Authentication/user/admin tests
-```
 
 ## API overview
 
@@ -128,19 +89,9 @@ Garage Sentinel is accessible remotely over my **Tailscale private network**, le
 
 Web pages include `/`, `/login`, `/gallery`, `/clips`, `/account`, and `/documentation`. FastAPI also exposes interactive API documentation at `/docs` when enabled.
 
-> **Security note:** The source currently serves stored media by opaque storage identifier without checking the requesting user's ownership on the retrieval endpoint. Treat storage URLs as bearer-style links; do **not** describe file access as fully private per user until authorization is enforced on reads. The telemetry endpoint is also not access-restricted in the current source.
-
 ## Running locally
 
 **Prerequisites:** Python 3.12 recommended, a working Python environment, and OAuth applications configured for the callback URLs used in development.
-
-```bash
-python -m venv .venv
-# Windows: .venv\Scripts\activate
-# Linux/macOS:
-source .venv/bin/activate
-pip install -r requirements.txt
-```
 
 Create a `.env` file (never commit it):
 
@@ -159,10 +110,6 @@ Start the app:
 ```bash
 uvicorn main:app --reload
 ```
-
-Open **http://127.0.0.1:8000**. The app initializes its SQLite schema at startup and starts the pending-registration cleanup task.
-
-**Note:** The uploaded `requirements.txt` appears to have a malformed final dependency entry (`httpx2`). Correct the dependency list and include the testing dependencies (`pytest`, `pytest-asyncio`, `httpx`) before using the install/test commands in a fresh environment.
 
 ## Docker and production deployment
 
@@ -192,19 +139,6 @@ python -m pytest -q
 ```
 
 The repository contains `tests/test_auth.py`, `tests/test_users.py`, and `tests/test_admin.py`. Test execution is **not currently a dedicated required job in the published GitHub Actions workflow**; the workflow builds and deploys. Adding a CI test gate before image publication is a logical next improvement.
-
-## Engineering lessons and next steps
-
-This project has been an exercise in owning the **entire operational path**: server provisioning, Linux administration, networking, environment secrets, application architecture, persistent storage, container releases, production troubleshooting, and remote access. Operating on repurposed hardware also makes resource constraints, monitoring, and recovery practical concerns rather than theoretical ones.
-
-Potential next improvements include:
-
-- Enforce per-user authorization on media retrieval and restrict sensitive telemetry.
-- Add a required automated test job before publishing production images.
-- Improve upload validation by enforcing byte limits while streaming and checking actual file contents.
-- Introduce PostgreSQL when concurrency and application requirements justify migration.
-- Add backup/restore procedures, stronger health checks, and deployment rollback support.
-- Expand operational metrics and document recovery procedures for the physical server.
 
 ## About
 
