@@ -6,14 +6,6 @@ Garage Sentinel is my personal cloud storage and media management platform, powe
 
 This is more than a locally running demo: I maintain the underlying hardware, Linux environment, networking, persistent storage, application code, and deployment process. Published releases build container images in GitHub's hosted infrastructure and deploy them to my physical server using a self-hosted runner.
 
-**Operational snapshot**
-
-- **24/7-oriented self-hosting** on a dedicated Ubuntu Server machine, operated for **1–3 months** as of November 2026.
-- **1–3 minute release-to-production deployments** observed in my environment.
-- **Three OAuth providers:** Google, Discord, and GitHub.
-- **Private remote access** to the application via Tailscale, without requiring public inbound application ports.
-- **Automated pytest coverage** of authentication, user management, and administrative flows.
-
 > **Project scope:** A personal, single-server cloud platform, not a claim of redundant/high-availability infrastructure or a commercially hosted SaaS product. Performance figures are observations from my deployment, not guaranteed benchmarks.
 
 ## Architecture
